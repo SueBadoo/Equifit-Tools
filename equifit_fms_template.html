@@ -2,10 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, interactive-widget=resizes-content">
 <title>Equifit + FMS Assessment Template</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  /* Prevent scroll jumping when focusing fields with physical keyboard */
+  input, textarea, select { touch-action: manipulation; }
 
   body {
     font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif;
@@ -514,6 +516,33 @@
     <textarea placeholder="Their vision of success — get specific…"></textarea>
     <label>Value moments / anecdotes woven in</label>
     <textarea placeholder="Where did you establish value? What landed?"></textarea>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🏥 Medical History & Areas of Concern</div>
+    <div class="alert-box"><strong>Ask before any movement assessment.</strong> Required for safe programming and FMS interpretation.</div>
+    <label>Current or recent injuries</label>
+    <textarea placeholder="e.g. Right knee surgery 2023, lower back strain, rotator cuff issue…"></textarea>
+    <label>Chronic conditions / diagnosed issues</label>
+    <textarea placeholder="e.g. Arthritis, osteoporosis, hypertension, diabetes… (note: do not record diagnoses — note only what client volunteers as relevant to training)"></textarea>
+    <label>Surgeries or procedures</label>
+    <textarea placeholder="e.g. Hip replacement, spinal fusion, cardiac procedure… and when"></textarea>
+    <label>Current medications that may affect training</label>
+    <textarea placeholder="e.g. Blood thinners, beta blockers, diuretics… (client may decline — note if so)"></textarea>
+    <label>Areas of pain, discomfort or limitation</label>
+    <textarea placeholder="e.g. Left shoulder clicks, lower back stiff in morning, knees hurt on stairs…"></textarea>
+    <label>Physical activity clearance</label>
+    <select>
+      <option value="">Select…</option>
+      <option>Cleared by physician for exercise</option>
+      <option>Has not seen physician recently</option>
+      <option>Physician recommended exercise</option>
+      <option>Has restrictions — note below</option>
+      <option>Declined to answer</option>
+    </select>
+    <label>Restrictions / additional notes</label>
+    <textarea placeholder="Any movements to avoid? Weight bearing restrictions? Pain thresholds?"></textarea>
+    <div class="alert-box" style="margin-top:12px;"><strong>⚠️ Score of 0 on any FMS test = pain present.</strong> If client reports pain during any movement, stop that test immediately and note here. Refer out if appropriate.</div>
   </div>
 </div>
 
@@ -1319,6 +1348,14 @@
       location.reload();
     }
   }
+
+  // Prevent page jumping when focusing input fields with physical keyboard
+  document.querySelectorAll('input, textarea, select').forEach(el => {
+    el.addEventListener('focus', function(e) {
+      const scrollPos = window.scrollY;
+      setTimeout(() => { window.scrollTo(0, scrollPos); }, 50);
+    });
+  });
 </script>
 </body>
 </html>

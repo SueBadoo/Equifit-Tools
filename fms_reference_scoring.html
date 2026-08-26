@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, interactive-widget=resizes-content">
 <title>FMS Reference & Scoring</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -935,6 +935,14 @@ input[type="text"]:focus { outline: none; border-color: #f5a623; background: whi
   function confirmReset() {
     if (confirm('Reset all scores for a new client?')) location.reload();
   }
+
+  // Prevent page jumping when focusing input fields with physical keyboard
+  document.querySelectorAll('input, textarea, select').forEach(el => {
+    el.addEventListener('focus', function(e) {
+      const scrollPos = window.scrollY;
+      setTimeout(() => { window.scrollTo(0, scrollPos); }, 50);
+    });
+  });
 </script>
 </body>
 </html>
