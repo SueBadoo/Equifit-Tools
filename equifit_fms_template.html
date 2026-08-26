@@ -7,7 +7,11 @@
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   /* Prevent scroll jumping when focusing fields with physical keyboard */
-  input, textarea, select { touch-action: manipulation; }
+  input, textarea, select { 
+    touch-action: manipulation;
+    scroll-margin-top: 0;
+    scroll-margin-bottom: 0;
+  }
 
   body {
     font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif;
@@ -1223,6 +1227,7 @@
     document.getElementById(id).classList.add('active');
     event.target.classList.add('active');
     if (id === 'tab-summary') updateSummary();
+    window.scrollTo(0, 0);
   }
 
   // CHECKLIST
