@@ -1354,20 +1354,27 @@
     }
   }
 
-  // Prevent page jumping when focusing input fields with physical keyboard
-  let isTyping = false;
-  document.addEventListener('focus', function(e) {
-    if (e.target.matches('input, textarea, select')) {
-      isTyping = true;
+  // Prevent page jumping when Tab key moves between fields
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Tab') {
+      const focusable = Array.from(document.querySelectorAll(
+        '.section.active input, .section.active textarea, .section.active select'
+      )).filter(el => !el.disabled && el.offsetParent !== null);
+      
+      const currentIndex = focusable.indexOf(document.activeElement);
+      if (currentIndex === -1) return;
+      
+      e.preventDefault();
       const scrollPos = window.scrollY;
-      const prevent = () => { window.scrollTo(0, scrollPos); };
-      window.addEventListener('scroll', prevent, { passive: false });
-      setTimeout(() => {
-        window.removeEventListener('scroll', prevent);
-        isTyping = false;
-      }, 300);
+      
+      const nextIndex = e.shiftKey 
+        ? (currentIndex - 1 + focusable.length) % focusable.length
+        : (currentIndex + 1) % focusable.length;
+      
+      focusable[nextIndex].focus({ preventScroll: true });
+      window.scrollTo(0, scrollPos);
     }
-  }, true);
+  });
 </script>
 </body>
 </html>
