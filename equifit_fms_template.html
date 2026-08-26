@@ -1354,25 +1354,22 @@
     }
   }
 
-  // Prevent page jumping when Tab key moves between fields
+  // Safari on iPad ignores preventScroll — so we just block Tab entirely
+  // and use Enter to advance to next field instead
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Tab') {
+      e.preventDefault();
+      return false;
+    }
+    if (e.key === 'Enter' && e.target.matches('input, select')) {
+      e.preventDefault();
       const focusable = Array.from(document.querySelectorAll(
         '.section.active input, .section.active textarea, .section.active select'
       )).filter(el => !el.disabled && el.offsetParent !== null);
-      
       const currentIndex = focusable.indexOf(document.activeElement);
-      if (currentIndex === -1) return;
-      
-      e.preventDefault();
-      const scrollPos = window.scrollY;
-      
-      const nextIndex = e.shiftKey 
-        ? (currentIndex - 1 + focusable.length) % focusable.length
-        : (currentIndex + 1) % focusable.length;
-      
-      focusable[nextIndex].focus({ preventScroll: true });
-      window.scrollTo(0, scrollPos);
+      if (currentIndex > -1 && currentIndex < focusable.length - 1) {
+        focusable[currentIndex + 1].focus({ preventScroll: true });
+      }
     }
   });
 </script>
