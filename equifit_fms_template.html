@@ -1350,11 +1350,17 @@
   }
 
   // Prevent page jumping when focusing input fields with physical keyboard
-  // Uses event delegation so it works across ALL tabs including ones not yet visible
+  let isTyping = false;
   document.addEventListener('focus', function(e) {
     if (e.target.matches('input, textarea, select')) {
+      isTyping = true;
       const scrollPos = window.scrollY;
-      setTimeout(() => { window.scrollTo(0, scrollPos); }, 50);
+      const prevent = () => { window.scrollTo(0, scrollPos); };
+      window.addEventListener('scroll', prevent, { passive: false });
+      setTimeout(() => {
+        window.removeEventListener('scroll', prevent);
+        isTyping = false;
+      }, 300);
     }
   }, true);
 </script>
