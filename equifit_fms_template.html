@@ -1350,12 +1350,13 @@
   }
 
   // Prevent page jumping when focusing input fields with physical keyboard
-  document.querySelectorAll('input, textarea, select').forEach(el => {
-    el.addEventListener('focus', function(e) {
+  // Uses event delegation so it works across ALL tabs including ones not yet visible
+  document.addEventListener('focus', function(e) {
+    if (e.target.matches('input, textarea, select')) {
       const scrollPos = window.scrollY;
       setTimeout(() => { window.scrollTo(0, scrollPos); }, 50);
-    });
-  });
+    }
+  }, true);
 </script>
 </body>
 </html>
