@@ -185,6 +185,21 @@
     color: white; border: none; border-radius: 12px; font-size: 16px;
     font-weight: 700; cursor: pointer; margin-top: 20px;
   }
+  /* CALC RESULTS */
+  .calc-result {
+    background: #1c1c1e; color: #f5a623; border-radius: 10px;
+    padding: 14px 16px; font-size: 14px; font-weight: 600;
+    line-height: 1.7; min-height: 52px;
+  }
+  .calc-result .cr-row { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid #2c2c2e; padding: 4px 0; }
+  .calc-result .cr-row:last-child { border-bottom: none; }
+  .calc-result .cr-label { color: #aaa; font-size: 12px; font-weight: 600; }
+  .calc-result .cr-val { color: white; font-size: 16px; font-weight: 700; }
+  .calc-result .cr-flag { font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 6px; }
+  .flag-good { background: #2ecc71; color: white; }
+  .flag-warn { background: #f5a623; color: white; }
+  .flag-alert { background: #e74c3c; color: white; }
+
   @media print {
     .tab-nav, .header { display: none; }
     .section { display: block !important; }
@@ -203,6 +218,7 @@
   <button class="tab-btn" onclick="showTab('tab-daylife', this)">Day in Life</button>
   <button class="tab-btn" onclick="showTab('tab-inbody', this)">InBody</button>
   <button class="tab-btn" onclick="showTab('tab-fms', this)">FMS Screen</button>
+  <button class="tab-btn" onclick="showTab('tab-cues', this)">FMS Cues</button>
   <button class="tab-btn" onclick="showTab('tab-summary', this)">Summary</button>
   <button class="tab-btn" onclick="showTab('tab-close', this)">The Close</button>
 </div>
@@ -322,23 +338,82 @@
 
 <!-- ══════════════ TAB 3: INBODY ══════════════ -->
 <div id="tab-inbody" class="section">
-  <div class="alert-box"><strong>Code: 0716</strong> — Optimal body water = 55%. Explain 100% = optimal baseline, then walk through each number as it relates to <em>this client's specific goals</em>. Start with the pros.</div>
+
+  <div class="alert-box"><strong>Code: 0716 · InBody 570</strong> — Start with the pros. Walk each number as it relates to <em>this client's specific goals</em>. ECW:ICW ratio is the key hydration marker on the 570.</div>
+
+  <!-- RAW DATA -->
   <div class="card">
-    <div class="card-title">📊 InBody Results</div>
+    <div class="card-title">📊 InBody 570 — Raw Results</div>
     <div class="inbody-grid">
-      <div class="inbody-item"><label>Weight (lbs)</label><input type="text" placeholder="—"></div>
-      <div class="inbody-item"><label>BMI</label><input type="text" placeholder="—"></div>
-      <div class="inbody-item"><label>Body Fat %</label><input type="text" placeholder="—"></div>
-      <div class="inbody-item"><label>Fat Mass (lbs)</label><input type="text" placeholder="—"></div>
-      <div class="inbody-item"><label>Skeletal Muscle Mass</label><input type="text" placeholder="—"></div>
-      <div class="inbody-item"><label>Body Water %</label><input type="text" placeholder="—"></div>
-      <div class="inbody-item"><label>BMR (kcal)</label><input type="text" placeholder="—"></div>
-      <div class="inbody-item"><label>Visceral Fat Level</label><input type="text" placeholder="—"></div>
+      <div class="inbody-item"><label>Weight (lbs)</label><input type="text" id="ib_weight" placeholder="—" oninput="calcInBody()"></div>
+      <div class="inbody-item"><label>Height (in)</label><input type="text" id="ib_height" placeholder="—" oninput="calcInBody()"></div>
+      <div class="inbody-item"><label>BMI</label><input type="text" id="ib_bmi" placeholder="—" oninput="calcInBody()"></div>
+      <div class="inbody-item"><label>Body Fat %</label><input type="text" id="ib_bfpct" placeholder="—" oninput="calcInBody()"></div>
+      <div class="inbody-item"><label>Fat Mass (lbs)</label><input type="text" id="ib_fatmass" placeholder="—" oninput="calcInBody()"></div>
+      <div class="inbody-item"><label>Skeletal Muscle Mass (lbs)</label><input type="text" id="ib_smm" placeholder="—" oninput="calcInBody()"></div>
+      <div class="inbody-item"><label>ECW:ICW Ratio</label><input type="text" id="ib_ecw" placeholder="0.36–0.39" oninput="calcInBody()"></div>
+      <div class="inbody-item"><label>Visceral Fat Level</label><input type="text" id="ib_vf" placeholder="—"></div>
+    </div>
+    <div class="row-2" style="margin-top:10px">
+      <div>
+        <label>Gender</label>
+        <select id="ib_gender" onchange="calcInBody()">
+          <option value="">Select…</option>
+          <option value="F">Female</option>
+          <option value="M">Male</option>
+        </select>
+      </div>
+      <div>
+        <label>Desired BMI (goal)</label>
+        <input type="text" id="ib_desiredbmi" placeholder="e.g. 23–25" oninput="calcInBody()">
+      </div>
     </div>
   </div>
+
+  <!-- HYDRATION STATUS -->
+  <div class="card">
+    <div class="card-title">💧 Hydration Status — ECW:ICW (570)</div>
+    <div id="hydration_result" class="calc-result">Enter ECW:ICW ratio above to evaluate.</div>
+    <div class="alert-box" style="margin-top:10px">
+      <strong>0.36–0.39</strong> = healthy · <strong>&lt;0.36</strong> = healthy muscle/hydration (not too low) · <strong>&gt;0.39</strong> = inflammatory state<br>
+      In range &amp; decreasing = real fat loss / muscle gain. Ratio up + weight down + fat steady = dehydration/inflammation.
+    </div>
+  </div>
+
+  <!-- BMI & GOAL WEIGHT -->
+  <div class="card">
+    <div class="card-title">⚖️ BMI Analysis &amp; Goal Weight</div>
+    <div id="bmi_result" class="calc-result">Enter weight, height, BMI, and desired BMI above.</div>
+    <div class="alert-box" style="margin-top:10px">
+      <strong>Formula:</strong> Goal Weight = (Height² × Desired BMI) / 703<br>
+      BMI 20–25 = healthy range for most. Athletes may justify higher.
+    </div>
+  </div>
+
+  <!-- SMM ANALYSIS -->
+  <div class="card">
+    <div class="card-title">💪 Skeletal Muscle Mass Analysis</div>
+    <div id="smm_result" class="calc-result">Enter weight, SMM, and gender above.</div>
+    <div class="alert-box" style="margin-top:10px">
+      <strong>Female target:</strong> 40–50% of bodyweight · <strong>Male target:</strong> 45–55%<br>
+      SMM% = SMM ÷ Bodyweight
+    </div>
+  </div>
+
+  <!-- CALORIC & PROTEIN NEEDS -->
+  <div class="card">
+    <div class="card-title">🔢 RMR, Protein &amp; Time to Goal</div>
+    <div id="caloric_result" class="calc-result">Enter weight and SMM above.</div>
+    <div class="alert-box" style="margin-top:10px">
+      <strong>RMR</strong> = Bodyweight × 11 · <strong>Protein</strong> = SMM × 1.5 g/day<br>
+      Time to goal = Fat loss needed ÷ (Caloric deficit/week ÷ 3500)
+    </div>
+  </div>
+
+  <!-- SEGMENTAL LEAN -->
   <div class="card">
     <div class="card-title">🦵 Segmental Lean Analysis</div>
-    <div class="alert-box"><strong>Important:</strong> Walk through R/L balance and what it means for their program.</div>
+    <div class="alert-box"><strong>Important:</strong> Walk through R/L balance — what asymmetry means for their program and corrective priority.</div>
     <div class="row-3">
       <div><label>Right Arm %</label><input type="text" placeholder="—"></div>
       <div><label>Left Arm %</label><input type="text" placeholder="—"></div>
@@ -348,22 +423,45 @@
       <div><label>Dominant side</label><input type="text" placeholder="R / L"></div>
     </div>
     <label>Imbalances / notes</label>
-    <textarea placeholder="e.g. L leg significantly stronger → tightness in R leg…"></textarea>
+    <textarea placeholder="e.g. L leg significantly stronger → tightness in R leg. Connects to FMS findings…"></textarea>
   </div>
+
+  <!-- PUSH-UP TEST & BASE MAX -->
   <div class="card">
-    <div class="card-title">📈 Goals & Program Formula</div>
-    <div class="alert-box"><strong>Formula:</strong> ~1 week per 1 lb fat loss · ~1 month per 1 lb muscle gain.</div>
+    <div class="card-title">🏋️ Push-Up Test &amp; Base Max Calculator</div>
+    <div class="alert-box">Coach proper position first: shoulder flexion through heel of palm via scapula · hip flexion from pelvis. Stop at first sign of decreased engagement.</div>
     <div class="row-2">
-      <div><label>Fat loss target (lbs)</label><input type="number" placeholder="lbs" id="fatTarget"></div>
-      <div><label>Muscle gain target (lbs)</label><input type="number" placeholder="lbs" id="muscleTarget"></div>
+      <div>
+        <label>Push-up type</label>
+        <select id="pu_type" onchange="calcPushup()">
+          <option value="0.65">Standard (×0.65)</option>
+          <option value="0.5">Kneeling (×0.5)</option>
+        </select>
+      </div>
+      <div><label>Total reps completed</label><input type="number" id="pu_reps" placeholder="reps" oninput="calcPushup()"></div>
     </div>
-    <label>Estimated program length</label>
-    <input type="text" id="programLength" placeholder="Calculated below" readonly style="background:#f0f0f0; color:#888;">
-    <label>Caloric adjustment needed</label>
-    <select><option value="">Select…</option><option>Increase (hypertrophy focus)</option><option>Decrease (fat loss focus)</option><option>Maintain</option><option>Recomp (slight deficit)</option></select>
-    <label>InBody coaching notes</label>
-    <textarea placeholder="How did client react? What stood out? Opportunities?"></textarea>
+    <div id="pushup_result" class="calc-result" style="margin-top:10px">Enter reps above to calculate Base Max.</div>
+
+    <div style="margin-top:16px; background:#f8f8f8; border-radius:10px; padding:12px;">
+      <div class="obs-group-label" style="margin-top:0">Rep Range Load Guide (% of Base Max)</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:8px; font-size:13px; color:#444;">
+        <div>20 reps → 50%</div><div>10 reps → 75%</div>
+        <div>15 reps → 65%</div><div>8 reps → 80%</div>
+        <div>12 reps → 70%</div><div>6 reps → 85%</div>
+        <div colspan="2">5 reps → 87.5% · 4 reps → 90%</div>
+      </div>
+    </div>
   </div>
+
+  <!-- COACHING NOTES -->
+  <div class="card">
+    <div class="card-title">📝 InBody Coaching Notes</div>
+    <label>How did client react? What stood out?</label>
+    <textarea placeholder="Emotional response to numbers, what resonated, opportunities to connect to their goals…"></textarea>
+    <label>Caloric direction needed</label>
+    <select><option value="">Select…</option><option>Increase (hypertrophy / surplus)</option><option>Decrease (fat loss / deficit)</option><option>Maintain</option><option>Recomp (slight deficit + protein focus)</option></select>
+  </div>
+
 </div>
 
 <!-- ══════════════ TAB 4: FMS SCREEN ══════════════ -->
@@ -828,6 +926,355 @@
   </div>
 </div>
 
+<!-- ══════════════ TAB 5: FMS CUES ══════════════ -->
+<div id="tab-cues" class="section">
+
+  <div class="alert-box"><strong>Read cues aloud verbatim. Setup first, then cue, then score.</strong> Up to 3 attempts per side. Score 0 if any pain — refer out.</div>
+
+  <!-- LIVE SCORE STRIP -->
+  <div style="background:#1c1c1e; border-radius:14px; padding:14px; margin-bottom:16px;">
+    <div style="color:#f5a623; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;">Live Scores</div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <div class="score-item"><div class="score-item-label">Squat</div><div class="score-item-value" id="cue-st1">—</div></div>
+      <div class="score-item"><div class="score-item-label">Hurdle</div><div class="score-item-value" id="cue-st2">—</div></div>
+      <div class="score-item"><div class="score-item-label">Lunge</div><div class="score-item-value" id="cue-st3">—</div></div>
+      <div class="score-item"><div class="score-item-label">Shoulder</div><div class="score-item-value" id="cue-st4">—</div></div>
+      <div class="score-item"><div class="score-item-label">Leg Raise</div><div class="score-item-value" id="cue-st5">—</div></div>
+      <div class="score-item"><div class="score-item-label">TSPU</div><div class="score-item-value" id="cue-st6">—</div></div>
+      <div class="score-item"><div class="score-item-label">Rotary</div><div class="score-item-value" id="cue-st7">—</div></div>
+      <div class="total-score score-item"><div class="score-item-label">Total / 21</div><div class="score-item-value" id="cue-total">—</div></div>
+    </div>
+  </div>
+
+  <!-- TEST 1: DEEP SQUAT -->
+  <div class="card">
+    <div class="card-title">1 · Deep Squat</div>
+    <div class="alert-box"><strong>Setup:</strong> Feet shoulder-width, toes forward, inside edge aligned with armpit crease. Dowel on top of head, elbows at 90°. Do NOT manually manipulate — spot for safety.</div>
+    <div style="background:#f8f8f8; border-radius:10px; padding:14px; border-left:4px solid #f5a623; margin-bottom:12px;">
+      <div style="font-size:11px; font-weight:800; color:#f5a623; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">📢 Read Aloud</div>
+      <ul style="margin-left:18px; font-size:14px; line-height:1.8; color:#1a1a1a;">
+        <li>"Stand tall with your feet shoulder-width apart and toes pointed forward."</li>
+        <li>"Grasp the dowel in both hands and place it on top of your head so your shoulders and elbows are at 90 degrees."</li>
+        <li>"Press the dowel so that it is directly above your head."</li>
+        <li>"While maintaining an upright torso and keeping your heels and the dowel in position, descend into a squat as deeply as possible."</li>
+        <li>"Hold the bottom position for a count of one, and then return to the starting position."</li>
+      </ul>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; font-size:13px;">
+      <div style="background:#e8faf0; border:1.5px solid #2ecc71; border-radius:10px; padding:10px;"><strong style="color:#27ae60;">3</strong> — Torso parallel with tibia, femur below horizontal, knees don't track inside feet, dowel over feet</div>
+      <div style="background:#fff8e6; border:1.5px solid #f5a623; border-radius:10px; padding:10px;"><strong style="color:#d4880a;">2</strong> — Same as 3 but heels elevated</div>
+      <div style="background:#fff3e0; border:1.5px solid #e67e22; border-radius:10px; padding:10px;"><strong style="color:#e67e22;">1</strong> — Tibia/torso not parallel, femur not below horizontal, knees cave, dowel not over feet</div>
+      <div style="background:#fdecea; border:1.5px solid #e74c3c; border-radius:10px; padding:10px;"><strong style="color:#e74c3c;">0</strong> — Any pain</div>
+    </div>
+    <div style="font-size:12px; color:#888; margin-bottom:10px;"><strong>Tips:</strong> Up to 3 reps. If no 3, repeat with board under heels. Observe front AND side.</div>
+    <div style="background:#1c1c1e; border-radius:12px; padding:12px;">
+      <div style="color:#f5a623; font-size:11px; font-weight:800; text-transform:uppercase; margin-bottom:8px;">Score</div>
+      <div style="display:flex; gap:8px;">
+        <div class="score-btn" onclick="setCueScore(1,null,3,this)">3</div>
+        <div class="score-btn" onclick="setCueScore(1,null,2,this)">2</div>
+        <div class="score-btn" onclick="setCueScore(1,null,1,this)">1</div>
+        <div class="score-btn" onclick="setCueScore(1,null,0,this)">0</div>
+      </div>
+      <div style="color:#aaa; font-size:13px; margin-top:10px;">Final: <span id="cue-final1" style="color:white; font-weight:700;">—</span></div>
+    </div>
+  </div>
+
+  <!-- TEST 2: HURDLE STEP -->
+  <div class="card">
+    <div class="card-title">2 · Hurdle Step</div>
+    <div class="alert-box"><strong>Setup:</strong> Tibial tuberosity height = hurdle height. Feet together, toes touching base. Dowel across shoulders below neck. Score the MOVING leg.</div>
+    <div style="background:#f8f8f8; border-radius:10px; padding:14px; border-left:4px solid #f5a623; margin-bottom:12px;">
+      <div style="font-size:11px; font-weight:800; color:#f5a623; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">📢 Read Aloud</div>
+      <ul style="margin-left:18px; font-size:14px; line-height:1.8; color:#1a1a1a;">
+        <li>"Stand tall with your feet together and toes touching the test kit."</li>
+        <li>"Grasp the dowel and place it across your shoulders at the base of your neck."</li>
+        <li>"While keeping an upright torso, raise the right leg and step over the hurdle, raising the foot toward the shin and maintaining foot alignment with the ankle, knee, and hip."</li>
+        <li>"Touch the floor with your heel and return to the starting position."</li>
+        <li>Repeat on left side.</li>
+      </ul>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; font-size:13px;">
+      <div style="background:#e8faf0; border:1.5px solid #2ecc71; border-radius:10px; padding:10px;"><strong style="color:#27ae60;">3</strong> — Hips/knees/ankles aligned sagittally, minimal lumbar movement, dowel and hurdle parallel</div>
+      <div style="background:#fff8e6; border:1.5px solid #f5a623; border-radius:10px; padding:10px;"><strong style="color:#d4880a;">2</strong> — Alignment lost, lumbar movement, dowel and hurdle NOT parallel</div>
+      <div style="background:#fff3e0; border:1.5px solid #e67e22; border-radius:10px; padding:10px;"><strong style="color:#e67e22;">1</strong> — Unable to clear cord, loss of balance</div>
+      <div style="background:#fdecea; border:1.5px solid #e74c3c; border-radius:10px; padding:10px;"><strong style="color:#e74c3c;">0</strong> — Any pain</div>
+    </div>
+    <div style="font-size:12px; color:#888; margin-bottom:10px;"><strong>Tips:</strong> Score MOVING leg. Stance toes stay touching base. Watch for stable torso. Observe front AND side.</div>
+    <div style="background:#1c1c1e; border-radius:12px; padding:12px;">
+      <div style="color:#f5a623; font-size:11px; font-weight:800; text-transform:uppercase; margin-bottom:8px;">Score — Final = Lowest Side</div>
+      <div style="color:#888; font-size:11px; margin-bottom:6px; text-transform:uppercase;">RIGHT</div>
+      <div style="display:flex; gap:8px; margin-bottom:10px;">
+        <div class="score-btn" onclick="setCueScore(2,'R',3,this)">3</div>
+        <div class="score-btn" onclick="setCueScore(2,'R',2,this)">2</div>
+        <div class="score-btn" onclick="setCueScore(2,'R',1,this)">1</div>
+        <div class="score-btn" onclick="setCueScore(2,'R',0,this)">0</div>
+      </div>
+      <div style="color:#888; font-size:11px; margin-bottom:6px; text-transform:uppercase;">LEFT</div>
+      <div style="display:flex; gap:8px;">
+        <div class="score-btn" onclick="setCueScore(2,'L',3,this)">3</div>
+        <div class="score-btn" onclick="setCueScore(2,'L',2,this)">2</div>
+        <div class="score-btn" onclick="setCueScore(2,'L',1,this)">1</div>
+        <div class="score-btn" onclick="setCueScore(2,'L',0,this)">0</div>
+      </div>
+      <div style="color:#aaa; font-size:13px; margin-top:10px;">Final: <span id="cue-final2" style="color:white; font-weight:700;">—</span></div>
+    </div>
+  </div>
+
+  <!-- TEST 3: INLINE LUNGE -->
+  <div class="card">
+    <div class="card-title">3 · Inline Lunge</div>
+    <div class="alert-box"><strong>Setup:</strong> Back foot toe at zero, front heel at tibial measurement. Dowel behind back touching head, thoracic spine, and sacrum. Opposite hand to front foot at cervical spine; other at lumbar.</div>
+    <label>📏 Tibial length</label>
+    <input type="text" id="cue-tibia" placeholder='e.g. 16"' oninput="document.getElementById('cue-tibia-display').textContent=this.value||'___'">
+    <div style="background:#f8f8f8; border-radius:10px; padding:14px; border-left:4px solid #f5a623; margin:12px 0;">
+      <div style="font-size:11px; font-weight:800; color:#f5a623; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">📢 Read Aloud</div>
+      <ul style="margin-left:18px; font-size:14px; line-height:1.8; color:#1a1a1a;">
+        <li>"Step onto the board with the toe of your back foot on the zero mark."</li>
+        <li>"Your front heel should be at <strong id="cue-tibia-display">___</strong>."</li>
+        <li>"Both toes must point forward, entire foot in contact with the board."</li>
+        <li>"Place the dowel along your spine touching the back of your head, upper back, and tailbone."</li>
+        <li>"Maintaining three points of contact, descend into a lunge so your back knee touches the center of the board, then return."</li>
+      </ul>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; font-size:13px;">
+      <div style="background:#e8faf0; border:1.5px solid #2ecc71; border-radius:10px; padding:10px;"><strong style="color:#27ae60;">3</strong> — Dowel contact maintained and vertical, minimal torso movement, knee touches center, front foot stays</div>
+      <div style="background:#fff8e6; border:1.5px solid #f5a623; border-radius:10px; padding:10px;"><strong style="color:#d4880a;">2</strong> — Dowel contact lost, torso moves, knee misses center, front foot shifts</div>
+      <div style="background:#fff3e0; border:1.5px solid #e67e22; border-radius:10px; padding:10px;"><strong style="color:#e67e22;">1</strong> — Steps off board, unable to complete, can't get into setup</div>
+      <div style="background:#fdecea; border:1.5px solid #e74c3c; border-radius:10px; padding:10px;"><strong style="color:#e74c3c;">0</strong> — Any pain</div>
+    </div>
+    <div style="font-size:12px; color:#888; margin-bottom:10px;"><strong>Tips:</strong> Front leg = side scored. Stay close — stepping off = score of 1. Front heel stays, back heel touches on return.</div>
+    <div style="background:#1c1c1e; border-radius:12px; padding:12px;">
+      <div style="color:#f5a623; font-size:11px; font-weight:800; text-transform:uppercase; margin-bottom:8px;">Score — Final = Lowest Side</div>
+      <div style="color:#888; font-size:11px; margin-bottom:6px; text-transform:uppercase;">RIGHT (front foot)</div>
+      <div style="display:flex; gap:8px; margin-bottom:10px;">
+        <div class="score-btn" onclick="setCueScore(3,'R',3,this)">3</div>
+        <div class="score-btn" onclick="setCueScore(3,'R',2,this)">2</div>
+        <div class="score-btn" onclick="setCueScore(3,'R',1,this)">1</div>
+        <div class="score-btn" onclick="setCueScore(3,'R',0,this)">0</div>
+      </div>
+      <div style="color:#888; font-size:11px; margin-bottom:6px; text-transform:uppercase;">LEFT (front foot)</div>
+      <div style="display:flex; gap:8px;">
+        <div class="score-btn" onclick="setCueScore(3,'L',3,this)">3</div>
+        <div class="score-btn" onclick="setCueScore(3,'L',2,this)">2</div>
+        <div class="score-btn" onclick="setCueScore(3,'L',1,this)">1</div>
+        <div class="score-btn" onclick="setCueScore(3,'L',0,this)">0</div>
+      </div>
+      <div style="color:#aaa; font-size:13px; margin-top:10px;">Final: <span id="cue-final3" style="color:white; font-weight:700;">—</span></div>
+    </div>
+  </div>
+
+  <!-- TEST 4: SHOULDER MOBILITY -->
+  <div class="card">
+    <div class="card-title">4 · Shoulder Mobility</div>
+    <div class="alert-box"><strong>Setup:</strong> Measure right hand from distal crease to longest digit. Top shoulder = side being scored. Do NOT let client creep hands after placement.</div>
+    <label>📏 Hand length (right)</label>
+    <input type="text" placeholder='e.g. 7"'>
+    <div style="background:#f8f8f8; border-radius:10px; padding:14px; border-left:4px solid #f5a623; margin:12px 0;">
+      <div style="font-size:11px; font-weight:800; color:#f5a623; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">📢 Read Aloud</div>
+      <ul style="margin-left:18px; font-size:14px; line-height:1.8; color:#1a1a1a;">
+        <li>"Stand tall with feet together, arms hanging comfortably."</li>
+        <li>"Make a fist so your fingers are around your thumbs."</li>
+        <li>"In one motion, reach the right fist over your head and down your back as far as possible while reaching your left fist up your back as far as possible."</li>
+        <li>"Do not creep your hands closer after initial placement."</li>
+        <li>Repeat with left fist overhead.</li>
+      </ul>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; font-size:13px;">
+      <div style="background:#e8faf0; border:1.5px solid #2ecc71; border-radius:10px; padding:10px;"><strong style="color:#27ae60;">3</strong> — Fists within one hand length</div>
+      <div style="background:#fff8e6; border:1.5px solid #f5a623; border-radius:10px; padding:10px;"><strong style="color:#d4880a;">2</strong> — Fists within one and a half hand lengths</div>
+      <div style="background:#fff3e0; border:1.5px solid #e67e22; border-radius:10px; padding:10px;"><strong style="color:#e67e22;">1</strong> — NOT within one and a half hand lengths</div>
+      <div style="background:#fdecea; border:1.5px solid #e74c3c; border-radius:10px; padding:10px;"><strong style="color:#e74c3c;">0</strong> — Any pain</div>
+    </div>
+    <div style="font-size:12px; color:#888; margin-bottom:10px;"><strong>Tips:</strong> If hand measurement = distance between points, score LOW. Perform AND clear both sides.</div>
+    <div style="background:#1c1c1e; border-radius:12px; padding:12px;">
+      <div style="color:#f5a623; font-size:11px; font-weight:800; text-transform:uppercase; margin-bottom:8px;">Score — Final = Lowest Side</div>
+      <div style="color:#888; font-size:11px; margin-bottom:6px; text-transform:uppercase;">RIGHT (top shoulder)</div>
+      <div style="display:flex; gap:8px; margin-bottom:10px;">
+        <div class="score-btn" onclick="setCueScore(4,'R',3,this)">3</div>
+        <div class="score-btn" onclick="setCueScore(4,'R',2,this)">2</div>
+        <div class="score-btn" onclick="setCueScore(4,'R',1,this)">1</div>
+        <div class="score-btn" onclick="setCueScore(4,'R',0,this)">0</div>
+      </div>
+      <div style="color:#888; font-size:11px; margin-bottom:6px; text-transform:uppercase;">LEFT (top shoulder)</div>
+      <div style="display:flex; gap:8px; margin-bottom:10px;">
+        <div class="score-btn" onclick="setCueScore(4,'L',3,this)">3</div>
+        <div class="score-btn" onclick="setCueScore(4,'L',2,this)">2</div>
+        <div class="score-btn" onclick="setCueScore(4,'L',1,this)">1</div>
+        <div class="score-btn" onclick="setCueScore(4,'L',0,this)">0</div>
+      </div>
+      <div style="color:#aaa; font-size:13px; margin-top:4px; margin-bottom:12px;">Final: <span id="cue-final4" style="color:white; font-weight:700;">—</span></div>
+      <!-- SHOULDER CLEARING -->
+      <div style="background:#2c2c2e; border-radius:10px; padding:12px; margin-top:4px;">
+        <div style="color:#f5a623; font-size:11px; font-weight:800; text-transform:uppercase; margin-bottom:8px;">🔍 Shoulder Clearing Test</div>
+        <div style="color:#ccc; font-size:13px; font-style:italic; margin-bottom:10px; line-height:1.6;">
+          "Place your palm on the front of the opposite shoulder, then raise your elbow as high as possible. Any pain?"<br>
+          <span style="color:#888; font-style:normal;">Pain = score of 0 for that side.</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+          <span style="color:#aaa; font-size:13px; font-weight:600; width:20px;">R</span>
+          <button class="pain-btn" onclick="toggleCuePain(this,'pos')">+ Pain</button>
+          <button class="pain-btn" onclick="toggleCuePain(this,'neg')">− Clear</button>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="color:#aaa; font-size:13px; font-weight:600; width:20px;">L</span>
+          <button class="pain-btn" onclick="toggleCuePain(this,'pos')">+ Pain</button>
+          <button class="pain-btn" onclick="toggleCuePain(this,'neg')">− Clear</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TEST 5: ASLR -->
+  <div class="card">
+    <div class="card-title">5 · Active Straight-Leg Raise</div>
+    <div class="alert-box"><strong>Setup:</strong> Client supine, arms by sides palms up. Board under knees. Feet together, soles perpendicular to floor. Find midpoint between ASIS and mid-patella — place dowel there. Moving limb = side scored. Non-moving limb stays in contact with board.</div>
+    <div style="background:#f8f8f8; border-radius:10px; padding:14px; border-left:4px solid #f5a623; margin-bottom:12px;">
+      <div style="font-size:11px; font-weight:800; color:#f5a623; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">📢 Read Aloud</div>
+      <ul style="margin-left:18px; font-size:14px; line-height:1.8; color:#1a1a1a;">
+        <li>"Lie flat with the back of your knees against the board, feet together, toes pointing up."</li>
+        <li>"Place both arms next to your body with palms facing up."</li>
+        <li>"With the opposite leg remaining straight and maintaining contact with the board, raise your right leg as high as possible."</li>
+        <li>Repeat on left side.</li>
+      </ul>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; font-size:13px;">
+      <div style="background:#e8faf0; border:1.5px solid #2ecc71; border-radius:10px; padding:10px;"><strong style="color:#27ae60;">3</strong> — Malleolus between mid-thigh and ASIS, non-moving limb neutral</div>
+      <div style="background:#fff8e6; border:1.5px solid #f5a623; border-radius:10px; padding:10px;"><strong style="color:#d4880a;">2</strong> — Malleolus between mid-thigh and mid-patella, non-moving limb neutral</div>
+      <div style="background:#fff3e0; border:1.5px solid #e67e22; border-radius:10px; padding:10px;"><strong style="color:#e67e22;">1</strong> — Malleolus BELOW mid-patella, non-moving limb neutral</div>
+      <div style="background:#fdecea; border:1.5px solid #e74c3c; border-radius:10px; padding:10px;"><strong style="color:#e74c3c;">0</strong> — Any pain</div>
+    </div>
+    <div style="font-size:12px; color:#888; margin-bottom:10px;"><strong>Tips:</strong> Moving leg = side scored. Non-moving limb must stay neutral. Only move dowel if at exact border of 1/2.</div>
+    <div style="background:#1c1c1e; border-radius:12px; padding:12px;">
+      <div style="color:#f5a623; font-size:11px; font-weight:800; text-transform:uppercase; margin-bottom:8px;">Score — Final = Lowest Side</div>
+      <div style="color:#888; font-size:11px; margin-bottom:6px; text-transform:uppercase;">RIGHT</div>
+      <div style="display:flex; gap:8px; margin-bottom:10px;">
+        <div class="score-btn" onclick="setCueScore(5,'R',3,this)">3</div>
+        <div class="score-btn" onclick="setCueScore(5,'R',2,this)">2</div>
+        <div class="score-btn" onclick="setCueScore(5,'R',1,this)">1</div>
+        <div class="score-btn" onclick="setCueScore(5,'R',0,this)">0</div>
+      </div>
+      <div style="color:#888; font-size:11px; margin-bottom:6px; text-transform:uppercase;">LEFT</div>
+      <div style="display:flex; gap:8px;">
+        <div class="score-btn" onclick="setCueScore(5,'L',3,this)">3</div>
+        <div class="score-btn" onclick="setCueScore(5,'L',2,this)">2</div>
+        <div class="score-btn" onclick="setCueScore(5,'L',1,this)">1</div>
+        <div class="score-btn" onclick="setCueScore(5,'L',0,this)">0</div>
+      </div>
+      <div style="color:#aaa; font-size:13px; margin-top:10px;">Final: <span id="cue-final5" style="color:white; font-weight:700;">—</span></div>
+    </div>
+  </div>
+
+  <!-- TEST 6: TSPU -->
+  <div class="card">
+    <div class="card-title">6 · Trunk Stability Push-Up</div>
+    <div class="alert-box"><strong>Setup:</strong> Prone, arms overhead at shoulder-width. Slide hands to start. <strong>Women: thumbs at chin. Men: thumbs at forehead.</strong> Knees extended, ankles neutral. Body lifts as ONE unit. If unable, drop to 2nd position (Women: clavicle / Men: chin).</div>
+    <div style="background:#f8f8f8; border-radius:10px; padding:14px; border-left:4px solid #f5a623; margin-bottom:12px;">
+      <div style="font-size:11px; font-weight:800; color:#f5a623; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">📢 Read Aloud</div>
+      <ul style="margin-left:18px; font-size:14px; line-height:1.8; color:#1a1a1a;">
+        <li>"Lie face down with arms extended overhead at shoulder-width."</li>
+        <li>"Pull your thumbs down in line with your forehead (men) / chin (women)."</li>
+        <li>"With legs together, pull your toes toward your shins."</li>
+        <li>"Lift your elbows slightly off the ground."</li>
+        <li>"Maintaining a rigid torso, push your body as one unit into a push-up position."</li>
+      </ul>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; font-size:13px;">
+      <div style="background:#e8faf0; border:1.5px solid #2ecc71; border-radius:10px; padding:10px;"><strong style="color:#27ae60;">3</strong> — 1st position, body lifts as unit, no spine lag</div>
+      <div style="background:#fff8e6; border:1.5px solid #f5a623; border-radius:10px; padding:10px;"><strong style="color:#d4880a;">2</strong> — 2nd position, body lifts as unit, no spine lag</div>
+      <div style="background:#fff3e0; border:1.5px solid #e67e22; border-radius:10px; padding:10px;"><strong style="color:#e67e22;">1</strong> — Unable at 2nd position</div>
+      <div style="background:#fdecea; border:1.5px solid #e74c3c; border-radius:10px; padding:10px;"><strong style="color:#e74c3c;">0</strong> — Any pain</div>
+    </div>
+    <div style="background:#1c1c1e; border-radius:12px; padding:12px;">
+      <div style="color:#f5a623; font-size:11px; font-weight:800; text-transform:uppercase; margin-bottom:8px;">Score</div>
+      <div style="display:flex; gap:8px; margin-bottom:12px;">
+        <div class="score-btn" onclick="setCueScore(6,null,3,this)">3</div>
+        <div class="score-btn" onclick="setCueScore(6,null,2,this)">2</div>
+        <div class="score-btn" onclick="setCueScore(6,null,1,this)">1</div>
+        <div class="score-btn" onclick="setCueScore(6,null,0,this)">0</div>
+      </div>
+      <div style="color:#aaa; font-size:13px; margin-bottom:12px;">Final: <span id="cue-final6" style="color:white; font-weight:700;">—</span></div>
+      <!-- EXTENSION CLEARING -->
+      <div style="background:#2c2c2e; border-radius:10px; padding:12px;">
+        <div style="color:#f5a623; font-size:11px; font-weight:800; text-transform:uppercase; margin-bottom:8px;">🔍 Extension Clearing (Cobra)</div>
+        <div style="color:#ccc; font-size:13px; font-style:italic; margin-bottom:10px; line-height:1.6;">
+          "Lying on your stomach, place palms under shoulders. Press your upper body up until elbows are straight. Any pain?"<br>
+          <span style="color:#888; font-style:normal;">Pain = score 0 · refer out.</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+          <span style="color:#aaa; font-size:13px; font-weight:600; width:20px;">R</span>
+          <button class="pain-btn" onclick="toggleCuePain(this,'pos')">+ Pain</button>
+          <button class="pain-btn" onclick="toggleCuePain(this,'neg')">− Clear</button>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="color:#aaa; font-size:13px; font-weight:600; width:20px;">L</span>
+          <button class="pain-btn" onclick="toggleCuePain(this,'pos')">+ Pain</button>
+          <button class="pain-btn" onclick="toggleCuePain(this,'neg')">− Clear</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TEST 7: ROTARY STABILITY -->
+  <div class="card">
+    <div class="card-title">7 · Rotary Stability</div>
+    <div class="alert-box"><strong>Setup:</strong> Quadruped over board, board parallel to spine. Shoulders and hips at 90°. Thumbs, knees, and feet touching sides of board, toes dorsiflexed. Upper moving limb = side scored. If unable unilateral, try diagonal.</div>
+    <div style="background:#f8f8f8; border-radius:10px; padding:14px; border-left:4px solid #f5a623; margin-bottom:12px;">
+      <div style="font-size:11px; font-weight:800; color:#f5a623; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">📢 Read Aloud</div>
+      <ul style="margin-left:18px; font-size:14px; line-height:1.8; color:#1a1a1a;">
+        <li>"Get on hands and knees over the board — hands under shoulders, knees under hips."</li>
+        <li>"Thumbs, knees, and toes contact the sides of the board, toes pulled toward shins."</li>
+        <li>"At the same time, reach your right arm forward and right leg backward — like you're flying."</li>
+        <li>"Without touching down, bring your right elbow to your right knee directly over the board."</li>
+        <li>"Return to the extended position, then return to start."</li>
+        <li>If unable: "Try the same movement but reach your right arm and left leg instead."</li>
+      </ul>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; font-size:13px;">
+      <div style="background:#e8faf0; border:1.5px solid #2ecc71; border-radius:10px; padding:10px;"><strong style="color:#27ae60;">3</strong> — Correct unilateral rep, same-side elbow/knee meet over board without touching down</div>
+      <div style="background:#fff8e6; border:1.5px solid #f5a623; border-radius:10px; padding:10px;"><strong style="color:#d4880a;">2</strong> — Correct diagonal rep, opposite elbow/knee meet over board without touching down</div>
+      <div style="background:#fff3e0; border:1.5px solid #e67e22; border-radius:10px; padding:10px;"><strong style="color:#e67e22;">1</strong> — Unable to perform diagonal rep</div>
+      <div style="background:#fdecea; border:1.5px solid #e74c3c; border-radius:10px; padding:10px;"><strong style="color:#e74c3c;">0</strong> — Any pain</div>
+    </div>
+    <div style="background:#1c1c1e; border-radius:12px; padding:12px;">
+      <div style="color:#f5a623; font-size:11px; font-weight:800; text-transform:uppercase; margin-bottom:8px;">Score — Final = Lowest Side</div>
+      <div style="color:#888; font-size:11px; margin-bottom:6px; text-transform:uppercase;">RIGHT (upper moving limb)</div>
+      <div style="display:flex; gap:8px; margin-bottom:10px;">
+        <div class="score-btn" onclick="setCueScore(7,'R',3,this)">3</div>
+        <div class="score-btn" onclick="setCueScore(7,'R',2,this)">2</div>
+        <div class="score-btn" onclick="setCueScore(7,'R',1,this)">1</div>
+        <div class="score-btn" onclick="setCueScore(7,'R',0,this)">0</div>
+      </div>
+      <div style="color:#888; font-size:11px; margin-bottom:6px; text-transform:uppercase;">LEFT (upper moving limb)</div>
+      <div style="display:flex; gap:8px; margin-bottom:10px;">
+        <div class="score-btn" onclick="setCueScore(7,'L',3,this)">3</div>
+        <div class="score-btn" onclick="setCueScore(7,'L',2,this)">2</div>
+        <div class="score-btn" onclick="setCueScore(7,'L',1,this)">1</div>
+        <div class="score-btn" onclick="setCueScore(7,'L',0,this)">0</div>
+      </div>
+      <div style="color:#aaa; font-size:13px; margin-top:4px; margin-bottom:12px;">Final: <span id="cue-final7" style="color:white; font-weight:700;">—</span></div>
+      <!-- FLEXION CLEARING -->
+      <div style="background:#2c2c2e; border-radius:10px; padding:12px;">
+        <div style="color:#f5a623; font-size:11px; font-weight:800; text-transform:uppercase; margin-bottom:8px;">🔍 Flexion Clearing (Child's Pose)</div>
+        <div style="color:#ccc; font-size:13px; font-style:italic; margin-bottom:10px; line-height:1.6;">
+          "From the start position, rock your hips toward your heels, lower your chest to your knees, reach hands as far forward as possible. Any pain?"<br>
+          <span style="color:#888; font-style:normal;">Pain = score 0 · refer out.</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+          <span style="color:#aaa; font-size:13px; font-weight:600; width:20px;">R</span>
+          <button class="pain-btn" onclick="toggleCuePain(this,'pos')">+ Pain</button>
+          <button class="pain-btn" onclick="toggleCuePain(this,'neg')">− Clear</button>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="color:#aaa; font-size:13px; font-weight:600; width:20px;">L</span>
+          <button class="pain-btn" onclick="toggleCuePain(this,'pos')">+ Pain</button>
+          <button class="pain-btn" onclick="toggleCuePain(this,'neg')">− Clear</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
 <!-- ══════════════ TAB 5: SUMMARY ══════════════ -->
 <div id="tab-summary" class="section">
   <div class="score-summary">
@@ -1042,6 +1489,182 @@
 
   function confirmReset() {
     if (confirm('Reset all fields for a new client? This cannot be undone.')) location.reload();
+  }
+
+  // ── FMS CUES TAB SCORING ──
+  const cueScores = {};
+
+  function setCueScore(test, side, val, btn) {
+    const key = side ? `${test}${side}` : test;
+    cueScores[key] = val;
+    const container = btn.closest('div[style*="display:flex"]') || btn.parentElement;
+    container.querySelectorAll('.score-btn').forEach(b => b.className = 'score-btn');
+    btn.classList.add('selected-' + val);
+    updateCueFinals();
+    updateCueStrip();
+  }
+
+  function getCueFinal(test) {
+    if (test === 1 || test === 6) return cueScores[test] !== undefined ? cueScores[test] : null;
+    const r = cueScores[`${test}R`], l = cueScores[`${test}L`];
+    if (r === undefined || r === null || l === undefined || l === null) return null;
+    return Math.min(r, l);
+  }
+
+  function updateCueFinals() {
+    for (let i = 1; i <= 7; i++) {
+      const f = getCueFinal(i);
+      const el = document.getElementById(`cue-final${i}`);
+      if (el) el.textContent = f !== null ? f : '—';
+    }
+  }
+
+  function updateCueStrip() {
+    let total = 0, allDone = true;
+    for (let i = 1; i <= 7; i++) {
+      const f = getCueFinal(i);
+      const el = document.getElementById(`cue-st${i}`);
+      if (el) {
+        if (f !== null) {
+          el.textContent = f;
+          el.style.color = f===3?'#2ecc71':f===2?'#f5a623':f===1?'#e67e22':'#e74c3c';
+          total += f;
+        } else { el.textContent='—'; el.style.color='white'; allDone=false; }
+      }
+    }
+    const tot = document.getElementById('cue-total');
+    if (tot) tot.textContent = allDone ? total : '—';
+  }
+
+  function toggleCuePain(btn, type) {
+    const row = btn.closest('div[style*="display:flex"]') || btn.parentElement;
+    row.querySelectorAll('.pain-btn').forEach(b => b.classList.remove('selected-pos','selected-neg'));
+    btn.classList.add(type === 'pos' ? 'selected-pos' : 'selected-neg');
+  }
+
+  // ── INBODY CALCULATOR ──
+  function calcInBody() {
+    const weight = parseFloat(document.getElementById('ib_weight').value);
+    const height = parseFloat(document.getElementById('ib_height').value);
+    const bmi    = parseFloat(document.getElementById('ib_bmi').value);
+    const bfpct  = parseFloat(document.getElementById('ib_bfpct').value);
+    const fatmass= parseFloat(document.getElementById('ib_fatmass').value);
+    const smm    = parseFloat(document.getElementById('ib_smm').value);
+    const ecw    = parseFloat(document.getElementById('ib_ecw').value);
+    const gender = document.getElementById('ib_gender').value;
+    const desiredBMI = parseFloat(document.getElementById('ib_desiredbmi').value);
+
+    // HYDRATION
+    const hydEl = document.getElementById('hydration_result');
+    if (!isNaN(ecw)) {
+      let flag, label;
+      if (ecw < 0.36) { flag='flag-good'; label='Healthy — not too low'; }
+      else if (ecw <= 0.39) { flag='flag-good'; label='In range — healthy'; }
+      else { flag='flag-alert'; label='Above 0.39 — inflammatory state'; }
+      hydEl.innerHTML = `
+        <div class="cr-row"><span class="cr-label">ECW:ICW Ratio</span><span><span class="cr-val">${ecw.toFixed(3)}</span> &nbsp;<span class="cr-flag ${flag}">${label}</span></span></div>`;
+    } else {
+      hydEl.textContent = 'Enter ECW:ICW ratio above to evaluate.';
+    }
+
+    // BMI & GOAL WEIGHT
+    const bmiEl = document.getElementById('bmi_result');
+    if (!isNaN(weight) && !isNaN(height) && !isNaN(bmi)) {
+      let bmiFlag, bmiLabel;
+      if (bmi < 20) { bmiFlag='flag-warn'; bmiLabel='Underweight'; }
+      else if (bmi <= 25) { bmiFlag='flag-good'; bmiLabel='Healthy range'; }
+      else if (bmi <= 30) { bmiFlag='flag-warn'; bmiLabel='Overweight'; }
+      else { bmiFlag='flag-alert'; bmiLabel='Obese'; }
+
+      let goalRow = '';
+      if (!isNaN(desiredBMI) && !isNaN(height)) {
+        const goalWeight = ((height * height) * desiredBMI) / 703;
+        const tolose = weight - goalWeight;
+        goalRow = `
+          <div class="cr-row"><span class="cr-label">Goal Weight (BMI ${desiredBMI})</span><span class="cr-val">${goalWeight.toFixed(1)} lbs</span></div>
+          <div class="cr-row"><span class="cr-label">Weight to ${tolose>0?'Lose':'Gain'}</span><span class="cr-val">${Math.abs(tolose).toFixed(1)} lbs</span></div>`;
+      }
+      bmiEl.innerHTML = `
+        <div class="cr-row"><span class="cr-label">Current BMI</span><span><span class="cr-val">${bmi}</span> &nbsp;<span class="cr-flag ${bmiFlag}">${bmiLabel}</span></span></div>
+        ${goalRow}`;
+    } else {
+      bmiEl.textContent = 'Enter weight, height, BMI, and desired BMI above.';
+    }
+
+    // SMM ANALYSIS
+    const smmEl = document.getElementById('smm_result');
+    if (!isNaN(weight) && !isNaN(smm) && gender) {
+      const smmPct = (smm / weight) * 100;
+      const lowTarget = gender === 'F' ? 40 : 45;
+      const highTarget = gender === 'F' ? 50 : 55;
+      let smmFlag, smmLabel;
+      if (smmPct < lowTarget) { smmFlag='flag-alert'; smmLabel='Below target'; }
+      else if (smmPct <= highTarget) { smmFlag='flag-good'; smmLabel='In target range'; }
+      else { smmFlag='flag-good'; smmLabel='Above target'; }
+
+      let muscleNeeded = '';
+      if (smmPct < lowTarget) {
+        const desiredSMM = weight * (lowTarget/100);
+        const toAdd = desiredSMM - smm;
+        muscleNeeded = `<div class="cr-row"><span class="cr-label">Muscle to Add (to reach ${lowTarget}%)</span><span class="cr-val">${toAdd.toFixed(1)} lbs (~${toAdd.toFixed(0)} months)</span></div>`;
+      }
+      smmEl.innerHTML = `
+        <div class="cr-row"><span class="cr-label">SMM%</span><span><span class="cr-val">${smmPct.toFixed(1)}%</span> &nbsp;<span class="cr-flag ${smmFlag}">${smmLabel}</span></span></div>
+        <div class="cr-row"><span class="cr-label">Target Range (${gender==='F'?'Female':'Male'})</span><span class="cr-val">${lowTarget}–${highTarget}%</span></div>
+        ${muscleNeeded}`;
+    } else {
+      smmEl.textContent = 'Enter weight, SMM, and gender above.';
+    }
+
+    // CALORIC / PROTEIN / TIME TO GOAL
+    const calEl = document.getElementById('caloric_result');
+    if (!isNaN(weight) && !isNaN(smm)) {
+      const rmr = weight * 11;
+      const protein = smm * 1.5;
+      let goalRows = '';
+      if (!isNaN(desiredBMI) && !isNaN(height)) {
+        const goalWeight = ((height * height) * desiredBMI) / 703;
+        const desiredRMR = goalWeight * 11;
+        const deficitDay = rmr - desiredRMR;
+        const deficitWeek = deficitDay * 7;
+        const lbsPerWeek = deficitWeek / 3500;
+        const fatToLose = !isNaN(fatmass) && !isNaN(bfpct) ? fatmass - (goalWeight * 0.22) : null;
+        const weeksToGoal = fatToLose && lbsPerWeek > 0 ? fatToLose / lbsPerWeek : null;
+        goalRows = `
+          <div class="cr-row"><span class="cr-label">Goal Weight RMR</span><span class="cr-val">${desiredRMR.toFixed(0)} kcal/day</span></div>
+          <div class="cr-row"><span class="cr-label">Caloric Deficit/Day</span><span class="cr-val">${deficitDay.toFixed(0)} kcal</span></div>
+          <div class="cr-row"><span class="cr-label">Projected Loss/Week</span><span class="cr-val">${lbsPerWeek.toFixed(2)} lbs</span></div>
+          ${weeksToGoal ? `<div class="cr-row"><span class="cr-label">Est. Time to Goal</span><span class="cr-val">${weeksToGoal.toFixed(0)} weeks (~${(weeksToGoal/4.3).toFixed(1)} months)</span></div>` : ''}`;
+      }
+      calEl.innerHTML = `
+        <div class="cr-row"><span class="cr-label">Current RMR</span><span class="cr-val">${rmr.toFixed(0)} kcal/day</span></div>
+        <div class="cr-row"><span class="cr-label">Daily Protein Need</span><span class="cr-val">${protein.toFixed(0)} g/day</span></div>
+        ${goalRows}`;
+    } else {
+      calEl.textContent = 'Enter weight and SMM above.';
+    }
+  }
+
+  // ── PUSH-UP BASE MAX CALCULATOR ──
+  function calcPushup() {
+    const weight = parseFloat(document.getElementById('ib_weight').value);
+    const reps   = parseFloat(document.getElementById('pu_reps').value);
+    const mult   = parseFloat(document.getElementById('pu_type').value);
+    const puEl   = document.getElementById('pushup_result');
+
+    if (isNaN(weight) || isNaN(reps) || reps <= 0) {
+      puEl.textContent = 'Enter body weight (above) and reps to calculate Base Max.';
+      return;
+    }
+    const puWeight = weight * mult;
+    const baseMax  = ((puWeight * reps) * 0.033) + puWeight;
+    const upperMax = baseMax * 0.9;
+
+    puEl.innerHTML = `
+      <div class="cr-row"><span class="cr-label">Push-Up Load</span><span class="cr-val">${puWeight.toFixed(1)} lbs</span></div>
+      <div class="cr-row"><span class="cr-label">Reps</span><span class="cr-val">${reps}</span></div>
+      <div class="cr-row"><span class="cr-label">Base Max (lower body / deadlift)</span><span class="cr-val">${baseMax.toFixed(1)} lbs</span></div>
+      <div class="cr-row"><span class="cr-label">Upper Body Max (bench / press)</span><span class="cr-val">${upperMax.toFixed(1)} lbs</span></div>`;
   }
 </script>
 </body>
