@@ -2,384 +2,189 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, interactive-widget=resizes-content">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Equifit + FMS Assessment Template</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  /* Prevent scroll jumping when focusing fields with physical keyboard */
-  input, textarea, select { 
-    touch-action: manipulation;
-    scroll-margin-top: 0;
-    scroll-margin-bottom: 0;
-  }
-
   body {
     font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif;
-    background: #f0f2f5;
-    color: #1a1a1a;
-    font-size: 16px;
-    padding: 0 0 60px 0;
+    background: #f0f2f5; color: #1a1a1a; font-size: 16px; padding: 0 0 60px 0;
   }
-
-  /* HEADER */
   .header {
-    background: #1c1c1e;
-    color: white;
-    padding: 20px 24px 16px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    background: #1c1c1e; color: white; padding: 20px 24px 16px;
+    position: sticky; top: 0; z-index: 100;
+    display: flex; justify-content: space-between; align-items: center;
     box-shadow: 0 2px 8px rgba(0,0,0,0.3);
   }
-  .header h1 {
-    font-size: 18px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-  }
-  .header .date-display {
-    font-size: 13px;
-    color: #aaa;
-  }
-
-  /* NAV TABS */
+  .header h1 { font-size: 18px; font-weight: 700; letter-spacing: 0.5px; }
+  .header .date-display { font-size: 13px; color: #aaa; }
   .tab-nav {
-    display: flex;
-    overflow-x: auto;
-    background: #2c2c2e;
-    padding: 0 8px;
-    gap: 4px;
-    scrollbar-width: none;
+    display: flex; overflow-x: auto; background: #2c2c2e;
+    padding: 0 8px; gap: 4px; scrollbar-width: none;
   }
   .tab-nav::-webkit-scrollbar { display: none; }
   .tab-btn {
-    flex-shrink: 0;
-    padding: 10px 14px;
-    background: none;
-    border: none;
-    color: #999;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    border-bottom: 3px solid transparent;
-    white-space: nowrap;
+    flex-shrink: 0; padding: 10px 14px; background: none; border: none;
+    color: #999; font-size: 13px; font-weight: 600; cursor: pointer;
+    border-bottom: 3px solid transparent; white-space: nowrap;
     transition: color 0.2s, border-color 0.2s;
   }
-  .tab-btn.active {
-    color: #fff;
-    border-bottom-color: #f5a623;
-  }
-
-  /* SECTIONS */
-  .section {
-    display: none;
-    padding: 16px;
-    max-width: 900px;
-    margin: 0 auto;
-  }
+  .tab-btn.active { color: #fff; border-bottom-color: #f5a623; }
+  .section { display: none; padding: 16px; max-width: 900px; margin: 0 auto; }
   .section.active { display: block; }
-
-  /* CARDS */
   .card {
-    background: white;
-    border-radius: 14px;
-    padding: 18px;
-    margin-bottom: 16px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    background: white; border-radius: 14px; padding: 18px;
+    margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.08);
   }
   .card-title {
-    font-size: 13px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    color: #f5a623;
-    margin-bottom: 14px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid #f0f0f0;
+    font-size: 13px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.8px; color: #f5a623; margin-bottom: 14px;
+    padding-bottom: 8px; border-bottom: 1px solid #f0f0f0;
   }
-
-  /* FORM ELEMENTS */
   label {
-    display: block;
-    font-size: 13px;
-    font-weight: 600;
-    color: #555;
-    margin-bottom: 4px;
-    margin-top: 12px;
+    display: block; font-size: 13px; font-weight: 600;
+    color: #555; margin-bottom: 4px; margin-top: 12px;
   }
   label:first-of-type { margin-top: 0; }
-
-  input[type="text"],
-  input[type="date"],
-  input[type="number"],
-  select,
-  textarea {
-    width: 100%;
-    padding: 11px 14px;
-    border: 1.5px solid #e0e0e0;
-    border-radius: 10px;
-    font-size: 16px;
-    font-family: inherit;
-    background: #fafafa;
-    color: #1a1a1a;
-    transition: border-color 0.2s, background 0.2s;
-    -webkit-appearance: none;
+  input[type="text"], input[type="date"], input[type="number"], select, textarea {
+    width: 100%; padding: 11px 14px; border: 1.5px solid #e0e0e0;
+    border-radius: 10px; font-size: 16px; font-family: inherit;
+    background: #fafafa; color: #1a1a1a;
+    transition: border-color 0.2s, background 0.2s; -webkit-appearance: none;
   }
   input:focus, select:focus, textarea:focus {
-    outline: none;
-    border-color: #f5a623;
-    background: #fff;
+    outline: none; border-color: #f5a623; background: #fff;
   }
   textarea { resize: vertical; min-height: 70px; }
-
   .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
 
-  /* FMS SCORING */
+  /* FMS */
   .fms-test {
-    background: #f8f8f8;
-    border-radius: 12px;
-    padding: 14px;
-    margin-bottom: 12px;
-    border-left: 4px solid #e0e0e0;
-    transition: border-color 0.2s;
+    background: #f8f8f8; border-radius: 12px; padding: 14px;
+    margin-bottom: 12px; border-left: 4px solid #e0e0e0; transition: border-color 0.2s;
   }
   .fms-test.scored { border-left-color: #f5a623; }
   .fms-test.pain { border-left-color: #e74c3c; }
-
-  .fms-test-title {
-    font-size: 15px;
-    font-weight: 700;
-    color: #1a1a1a;
-    margin-bottom: 10px;
-  }
-
-  .score-buttons {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 10px;
-  }
+  .fms-test-title { font-size: 14px; font-weight: 700; color: #444; margin-bottom: 10px; font-style: italic; }
+  .score-buttons { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
   .score-btn {
-    width: 52px;
-    height: 52px;
-    border-radius: 12px;
-    border: 2px solid #e0e0e0;
-    background: white;
-    font-size: 18px;
-    font-weight: 700;
-    color: #999;
-    cursor: pointer;
-    transition: all 0.15s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 52px; height: 52px; border-radius: 12px; border: 2px solid #e0e0e0;
+    background: white; font-size: 18px; font-weight: 700; color: #999; cursor: pointer;
+    transition: all 0.15s; display: flex; align-items: center; justify-content: center;
   }
-  .score-btn:hover { border-color: #f5a623; color: #f5a623; }
+  .score-btn:hover { border-color: #f5a623; color: #c47700; }
   .score-btn.selected-3 { background: #2ecc71; border-color: #2ecc71; color: white; }
   .score-btn.selected-2 { background: #f5a623; border-color: #f5a623; color: white; }
   .score-btn.selected-1 { background: #e67e22; border-color: #e67e22; color: white; }
   .score-btn.selected-0 { background: #e74c3c; border-color: #e74c3c; color: white; }
-
   .side-label {
-    font-size: 12px;
-    font-weight: 700;
-    color: #888;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 6px;
+    font-size: 12px; font-weight: 700; color: #888;
+    text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;
   }
-
   .bilateral-scores { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
+  /* OBSERVATION SECTION */
+  .obs-section { margin-top: 12px; }
+  .obs-group { margin-bottom: 12px; }
+  .obs-group-label {
+    font-size: 11px; font-weight: 800; color: #f5a623;
+    text-transform: uppercase; letter-spacing: 1px;
+    margin-bottom: 7px; margin-top: 10px;
+  }
+  .obs-buttons { display: flex; flex-wrap: wrap; gap: 7px; }
+  .obs-btn {
+    padding: 7px 12px; border-radius: 18px;
+    border: 2px solid #e0e0e0; background: white;
+    font-size: 12px; font-weight: 600; color: #666;
+    cursor: pointer; transition: all 0.15s; line-height: 1.2; text-align: center;
+  }
+  .obs-btn:active { transform: scale(0.96); }
+  .obs-btn.flagged { background: #e74c3c; border-color: #e74c3c; color: white; }
+
+  /* PATTERN CALLOUT */
+  .pattern-box {
+    background: #1c1c1e; border-radius: 10px; padding: 11px 14px;
+    margin-top: 10px; font-size: 12px; color: #ccc; line-height: 1.5; display: none;
+  }
+  .pattern-box strong { color: #f5a623; display: block; margin-bottom: 4px; font-size: 12px; }
+
+  /* CLEARING */
   .clearing-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-top: 8px;
+    display: flex; align-items: center; gap: 12px; margin-top: 8px;
   }
   .clearing-label { font-size: 13px; color: #666; font-weight: 600; flex: 1; }
-  .pain-toggle {
-    display: flex;
-    gap: 8px;
-  }
+  .pain-toggle { display: flex; gap: 8px; }
   .pain-btn {
-    padding: 8px 16px;
-    border-radius: 8px;
-    border: 2px solid #e0e0e0;
-    background: white;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.15s;
+    padding: 8px 14px; border-radius: 8px; border: 2px solid #e0e0e0;
+    background: white; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s;
   }
-  .pain-btn.pos { }
-  .pain-btn.neg { }
   .pain-btn.selected-pos { background: #e74c3c; border-color: #e74c3c; color: white; }
   .pain-btn.selected-neg { background: #2ecc71; border-color: #2ecc71; color: white; }
 
   /* SCORE SUMMARY */
-  .score-summary {
-    background: #1c1c1e;
-    border-radius: 14px;
-    padding: 18px;
-    margin-bottom: 16px;
-  }
+  .score-summary { background: #1c1c1e; border-radius: 14px; padding: 18px; margin-bottom: 16px; }
   .score-summary-title {
-    color: #f5a623;
-    font-size: 13px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    margin-bottom: 14px;
+    color: #f5a623; font-size: 13px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 14px;
   }
-  .score-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-  }
-  .score-item {
-    background: #2c2c2e;
-    border-radius: 10px;
-    padding: 10px 8px;
-    text-align: center;
-  }
-  .score-item-label {
-    font-size: 10px;
-    color: #888;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-    margin-bottom: 4px;
-  }
-  .score-item-value {
-    font-size: 22px;
-    font-weight: 700;
-    color: white;
-  }
-  .total-score {
-    background: #f5a623;
-    border-radius: 10px;
-    padding: 12px 8px;
-    text-align: center;
-    grid-column: span 2;
-  }
+  .score-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .score-item { background: #2c2c2e; border-radius: 10px; padding: 10px 8px; text-align: center; }
+  .score-item-label { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 4px; }
+  .score-item-value { font-size: 22px; font-weight: 700; color: white; }
+  .total-score { background: #f5a623; border-radius: 10px; padding: 12px 8px; text-align: center; grid-column: span 2; }
   .total-score .score-item-label { color: rgba(255,255,255,0.7); }
   .total-score .score-item-value { font-size: 28px; }
 
-  /* CLOSE SECTION */
+  /* CLOSE */
   .close-highlight {
-    background: linear-gradient(135deg, #1c1c1e, #2c2c2e);
-    border-radius: 14px;
-    padding: 20px;
-    margin-bottom: 16px;
-    border: 1px solid #f5a623;
+    background: linear-gradient(135deg, #1c1c1e, #2c2c2e); border-radius: 14px;
+    padding: 20px; margin-bottom: 16px; border: 1px solid #f5a623;
   }
-  .close-script {
-    color: #f5a623;
-    font-size: 15px;
-    font-weight: 600;
-    line-height: 1.6;
-    margin-bottom: 12px;
-  }
-  .close-script span {
-    color: white;
-    font-style: italic;
-  }
+  .close-script { color: #f5a623; font-size: 15px; font-weight: 600; line-height: 1.6; margin-bottom: 12px; }
+  .close-script span { color: white; font-style: italic; }
 
   /* CHECKLIST */
   .checklist-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 10px 0;
-    border-bottom: 1px solid #f5f5f5;
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 10px 0; border-bottom: 1px solid #f5f5f5;
   }
   .checklist-item:last-child { border-bottom: none; }
   .check-box {
-    width: 26px;
-    height: 26px;
-    border-radius: 8px;
-    border: 2px solid #e0e0e0;
-    background: white;
-    cursor: pointer;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    transition: all 0.15s;
-    margin-top: 1px;
+    width: 26px; height: 26px; border-radius: 8px; border: 2px solid #e0e0e0;
+    background: white; cursor: pointer; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; transition: all 0.15s; margin-top: 1px;
   }
   .check-box.checked { background: #2ecc71; border-color: #2ecc71; color: white; }
   .check-text { font-size: 15px; color: #333; line-height: 1.4; }
   .check-text.important { font-weight: 700; color: #1a1a1a; }
 
-  /* ALERT BOX */
+  /* ALERT */
   .alert-box {
-    background: #fff8e6;
-    border: 1.5px solid #f5a623;
-    border-radius: 10px;
-    padding: 12px 14px;
-    font-size: 13px;
-    color: #7a5500;
-    margin-bottom: 12px;
-    line-height: 1.5;
+    background: #fff8e6; border: 1.5px solid #f5a623; border-radius: 10px;
+    padding: 12px 14px; font-size: 13px; color: #7a5500; margin-bottom: 12px; line-height: 1.5;
   }
   .alert-box strong { color: #c47700; }
 
-  /* INBODY FIELDS */
-  .inbody-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-  .inbody-item {
-    background: #f8f8f8;
-    border-radius: 10px;
-    padding: 12px;
-  }
+  /* INBODY */
+  .inbody-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .inbody-item { background: #f8f8f8; border-radius: 10px; padding: 12px; }
   .inbody-item label { margin-top: 0; color: #888; font-size: 12px; }
   .inbody-item input {
-    border: none;
-    background: transparent;
-    padding: 4px 0;
-    font-size: 18px;
-    font-weight: 700;
-    color: #1a1a1a;
-    border-bottom: 2px solid #e0e0e0;
-    border-radius: 0;
+    border: none; background: transparent; padding: 4px 0;
+    font-size: 18px; font-weight: 700; color: #1a1a1a;
+    border-bottom: 2px solid #e0e0e0; border-radius: 0;
   }
   .inbody-item input:focus { border-bottom-color: #f5a623; background: transparent; }
 
-  /* PRICING */
-  .price-card {
-    background: #f8f8f8;
-    border-radius: 10px;
-    padding: 12px 14px;
-    margin-bottom: 8px;
-    font-size: 14px;
-    color: #333;
-  }
+  .price-card { background: #f8f8f8; border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; font-size: 14px; color: #333; }
   .price-card strong { color: #1a1a1a; }
-
-  /* RESET BUTTON */
   .reset-btn {
-    display: block;
-    width: 100%;
-    padding: 14px;
-    background: #e74c3c;
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    margin-top: 20px;
+    display: block; width: 100%; padding: 14px; background: #e74c3c;
+    color: white; border: none; border-radius: 12px; font-size: 16px;
+    font-weight: 700; cursor: pointer; margin-top: 20px;
   }
-
-  /* PRINT / EXPORT */
   @media print {
     .tab-nav, .header { display: none; }
     .section { display: block !important; }
@@ -394,47 +199,29 @@
 </div>
 
 <div class="tab-nav">
-  <button class="tab-btn active" onclick="showTab('tab-intake')">Intake</button>
-  <button class="tab-btn" onclick="showTab('tab-daylife')">Day in Life</button>
-  <button class="tab-btn" onclick="showTab('tab-inbody')">InBody</button>
-  <button class="tab-btn" onclick="showTab('tab-fms')">FMS Screen</button>
-  <button class="tab-btn" onclick="showTab('tab-summary')">Summary</button>
-  <button class="tab-btn" onclick="showTab('tab-close')">The Close</button>
+  <button class="tab-btn active" onclick="showTab('tab-intake', this)">Intake</button>
+  <button class="tab-btn" onclick="showTab('tab-daylife', this)">Day in Life</button>
+  <button class="tab-btn" onclick="showTab('tab-inbody', this)">InBody</button>
+  <button class="tab-btn" onclick="showTab('tab-fms', this)">FMS Screen</button>
+  <button class="tab-btn" onclick="showTab('tab-summary', this)">Summary</button>
+  <button class="tab-btn" onclick="showTab('tab-close', this)">The Close</button>
 </div>
 
-<!-- ══════════════════════════════════════════════════
-     TAB 1: INTAKE
-══════════════════════════════════════════════════ -->
+<!-- ══════════════ TAB 1: INTAKE ══════════════ -->
 <div id="tab-intake" class="section active">
-
   <div class="card">
     <div class="card-title">📋 Client Info</div>
     <label>Client Name</label>
     <input type="text" id="clientName" placeholder="First Last" oninput="updateClientName()">
     <div class="row-2">
-      <div>
-        <label>Date</label>
-        <input type="date" id="sessionDate">
-      </div>
-      <div>
-        <label>Session Time</label>
-        <input type="text" placeholder="e.g. 9:00 AM">
-      </div>
+      <div><label>Date</label><input type="date" id="sessionDate"></div>
+      <div><label>Session Time</label><input type="text" placeholder="e.g. 9:00 AM"></div>
     </div>
     <div class="row-2">
-      <div>
-        <label>Age</label>
-        <input type="number" placeholder="Age">
-      </div>
+      <div><label>Age</label><input type="number" placeholder="Age"></div>
       <div>
         <label>Gender</label>
-        <select>
-          <option value="">Select…</option>
-          <option>Male</option>
-          <option>Female</option>
-          <option>Non-binary</option>
-          <option>Prefer not to say</option>
-        </select>
+        <select><option value="">Select…</option><option>Male</option><option>Female</option><option>Non-binary</option><option>Prefer not to say</option></select>
       </div>
     </div>
     <label>Contact / Member #</label>
@@ -442,416 +229,201 @@
   </div>
 
   <div class="card">
-    <div class="card-title">🚶 At Front Desk</div>
-    <div class="checklist-item">
-      <div class="check-box" onclick="toggleCheck(this)"></div>
-      <div class="check-text">Name confirmed</div>
-    </div>
-    <div class="checklist-item">
-      <div class="check-box" onclick="toggleCheck(this)"></div>
-      <div class="check-text">Checked in?</div>
-    </div>
-    <div class="checklist-item">
-      <div class="check-box" onclick="toggleCheck(this)"></div>
-      <div class="check-text important">Set Expectations:<br>
-        "We're going to find out about you…<br>
-        Get some numbers for a baseline…<br>
-        Do a few light movements…<br>
-        See how we can attain your goals. Sound good?"
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">🚶 Walking to Equifit Room</div>
-    <div class="checklist-item">
-      <div class="check-box" onclick="toggleCheck(this)"></div>
-      <div class="check-text">Shoot the breeze — Traffic / Kids / What brought you to Equinox? (What do you like about it?)</div>
-    </div>
-    <label>Rapport notes (what came up en route)</label>
-    <textarea placeholder="Anything useful for connection or follow-up…"></textarea>
-  </div>
-
-  <div class="card">
-    <div class="card-title">🪑 In Room</div>
-    <div class="checklist-item">
-      <div class="check-box" onclick="toggleCheck(this)"></div>
-      <div class="check-text important">⚡ BOOK CPT AS YOU SIT DOWN</div>
-    </div>
+    <div class="card-title">🚶 Front Desk → Room Checklist</div>
+    <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-text">Greeted at front desk — name confirmed, checked in</div></div>
+    <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-text important">Set Expectations: "We're going to find out about you, get some baseline numbers, do a few light movements, and see how we can attain your goals. Sound good?"</div></div>
+    <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-text">Walking to room — shoot the breeze (traffic, kids, what brought them to Equinox)</div></div>
+    <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-text important">⚡ BOOK CPT AS YOU SIT DOWN</div></div>
   </div>
 
   <div class="card">
     <div class="card-title">🎤 Elevator Pitch (45 sec MAX)</div>
-    <div class="alert-box">
-      <strong>"We're going to be talking about you for the next hour, so let me tell you a little bit about me. Sound good?"</strong>
-    </div>
-    <div class="checklist-item">
-      <div class="check-box" onclick="toggleCheck(this)"></div>
-      <div class="check-text">Name + length of time training</div>
-    </div>
-    <div class="checklist-item">
-      <div class="check-box" onclick="toggleCheck(this)"></div>
-      <div class="check-text">15 years training in martial arts, 3rd degree black belt, train adults and kids</div>
-    </div>
-    <div class="checklist-item">
-      <div class="check-box" onclick="toggleCheck(this)"></div>
-      <div class="check-text important">Why you love training people:<br>"I love adapting the principles of my martial art's basis in stability and balance to help people not only move safer, but smarter so that they avoid injury and put less stress on their joints so that they can live better and excel."</div>
-    </div>
-    <div class="checklist-item">
-      <div class="check-box" onclick="toggleCheck(this)"></div>
-      <div class="check-text">Fun Fact: "As a 3rd degree or Sandan, we are given a warrior name from our An-Shu. Mine is Myotoshi, which means 'Warrior of the Blade of Creation'"</div>
-    </div>
-    <div class="checklist-item">
-      <div class="check-box" onclick="toggleCheck(this)"></div>
-      <div class="check-text important">"Now let's talk about YOU… I'm going to take some notes if that's okay."</div>
-    </div>
+    <div class="alert-box"><strong>Script:</strong> "We're going to be talking about you for the next hour, so let me tell you a little bit about me. Sound good?" → Name · Training background · Martial arts / Sandan / Myotoshi · Why you love training people · Fun fact. Then: <strong>"Now let's talk about YOU…"</strong></div>
+    <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-text">Pitch delivered — stayed under 45 seconds</div></div>
     <label>Client reaction / rapport notes</label>
-    <textarea placeholder="How did they respond? Ice broken? Anything that resonated?"></textarea>
+    <textarea placeholder="How did they respond? Ice broken?"></textarea>
   </div>
 
   <div class="card">
     <div class="card-title">🎯 Goals Discovery</div>
-    <div class="alert-box">LISTEN and take notes. Acknowledge skills, show what you know and how you can help. Weave in anecdotes to establish value. Slide in personal value where it fits.</div>
     <label>What do you hope to learn from today?</label>
-    <textarea placeholder="Client's answer in their own words…"></textarea>
-    <label>What are your SPECIFIC goals?</label>
-    <textarea placeholder="Use their exact words — weight loss? Strength? Balance? Mobility? Pain reduction?"></textarea>
+    <textarea placeholder="Client's answer…"></textarea>
+    <label>Specific goals (use their exact words)</label>
+    <textarea placeholder="Weight loss? Strength? Balance? Mobility? Pain reduction?"></textarea>
     <label>What does that look like to you?</label>
-    <textarea placeholder="Their vision of success — get specific…"></textarea>
-    <label>Value moments / anecdotes woven in</label>
-    <textarea placeholder="Where did you establish value? What landed?"></textarea>
-  </div>
-
-  <div class="card">
-    <div class="card-title">🏥 Medical History & Areas of Concern</div>
-    <div class="alert-box"><strong>Ask before any movement assessment.</strong> Required for safe programming and FMS interpretation.</div>
-    <label>Current or recent injuries</label>
-    <textarea placeholder="e.g. Right knee surgery 2023, lower back strain, rotator cuff issue…"></textarea>
-    <label>Chronic conditions / diagnosed issues</label>
-    <textarea placeholder="e.g. Arthritis, osteoporosis, hypertension, diabetes… (note: do not record diagnoses — note only what client volunteers as relevant to training)"></textarea>
-    <label>Surgeries or procedures</label>
-    <textarea placeholder="e.g. Hip replacement, spinal fusion, cardiac procedure… and when"></textarea>
-    <label>Current medications that may affect training</label>
-    <textarea placeholder="e.g. Blood thinners, beta blockers, diuretics… (client may decline — note if so)"></textarea>
-    <label>Areas of pain, discomfort or limitation</label>
-    <textarea placeholder="e.g. Left shoulder clicks, lower back stiff in morning, knees hurt on stairs…"></textarea>
-    <label>Physical activity clearance</label>
-    <select>
-      <option value="">Select…</option>
-      <option>Cleared by physician for exercise</option>
-      <option>Has not seen physician recently</option>
-      <option>Physician recommended exercise</option>
-      <option>Has restrictions — note below</option>
-      <option>Declined to answer</option>
-    </select>
-    <label>Restrictions / additional notes</label>
-    <textarea placeholder="Any movements to avoid? Weight bearing restrictions? Pain thresholds?"></textarea>
-    <div class="alert-box" style="margin-top:12px;"><strong>⚠️ Score of 0 on any FMS test = pain present.</strong> If client reports pain during any movement, stop that test immediately and note here. Refer out if appropriate.</div>
+    <textarea placeholder="Their vision of success…"></textarea>
+    <label>Notes / anecdotes / value moments</label>
+    <textarea placeholder="Where did you weave in value? What resonated?"></textarea>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════
-     TAB 2: DAY IN LIFE
-══════════════════════════════════════════════════ -->
+<!-- ══════════════ TAB 2: DAY IN LIFE ══════════════ -->
 <div id="tab-daylife" class="section">
-
   <div class="card">
-    <div class="card-title">🌅 Waking Up</div>
-    <label>Morning person? Who's around?</label>
-    <input type="text" placeholder="Early bird or night owl? Live alone? Family?">
-    <label>Alarm or jump out of bed raring to go?</label>
-    <input type="text" placeholder="Alarm / snooze / naturally wakes / raring to go…">
+    <div class="card-title">🌅 Morning</div>
+    <label>Alarm or jump out of bed?</label><input type="text" placeholder="e.g. Alarm, snooze x3, or naturally wakes">
     <div class="row-2">
-      <div>
-        <label>What time?</label>
-        <input type="text" placeholder="e.g. 6:30 AM">
-      </div>
-      <div>
-        <label>How many hrs of sleep on average?</label>
-        <input type="number" placeholder="hrs">
-      </div>
+      <div><label>Wake time</label><input type="text" placeholder="e.g. 6:30 AM"></div>
+      <div><label>Avg hrs sleep</label><input type="number" placeholder="hrs"></div>
     </div>
-    <label>How do you feel?</label>
-    <input type="text" placeholder="Rested? Groggy? Stiff? In pain?">
+    <label>How do they feel waking up?</label><input type="text" placeholder="Rested? Groggy? Pain?">
+    <label>Morning ritual / first things</label><textarea placeholder="Coffee, scroll phone, walk dog, meditate…"></textarea>
+    <label>Patterns noticed</label><textarea placeholder="Negative self-talk? Excuses? Something said more than twice?"></textarea>
   </div>
-
   <div class="card">
-    <div class="card-title">☀️ Morning Ritual</div>
-    <div class="alert-box">
-      Looking for: <strong>habits</strong> (making bed, no food 2 hrs before bed) & <strong>patterns</strong> (self-deprecation/doubt/congratulatory, excuses, something they say more than twice, negative self-talk, addiction mentality)
-    </div>
-    <label>First thing you do after you get up</label>
-    <textarea placeholder="Coffee, phone, shower, dog walk, meditation…" style="min-height:55px"></textarea>
-    <label>Patterns noticed</label>
-    <textarea placeholder="Note anything said more than twice, negative self-talk, excuses, attitude…" style="min-height:55px"></textarea>
-  </div>
-
-  <div class="card">
-    <div class="card-title">💼 Morning Routine / Work / Activity</div>
-    <label>Job description?</label>
-    <input type="text" placeholder="e.g. Office manager, teacher, retired, stay-at-home parent…">
+    <div class="card-title">💼 Work / Activity</div>
+    <label>Job / daytime activities</label><input type="text" placeholder="e.g. Office manager, stay-at-home parent, retired…">
     <div class="row-2">
-      <div>
-        <label>Sedentary or active job?</label>
-        <select>
-          <option value="">Select…</option>
-          <option>Mostly sedentary</option>
-          <option>Mixed</option>
-          <option>Mostly active</option>
-        </select>
-      </div>
-      <div>
-        <label>Hours/day or week?</label>
-        <input type="text" placeholder="e.g. 8 hrs/day">
-      </div>
+      <div><label>Sedentary or active?</label><select><option value="">Select…</option><option>Mostly sedentary</option><option>Mixed</option><option>Mostly active</option></select></div>
+      <div><label>Hours/day or week</label><input type="text" placeholder="e.g. 8 hrs/day"></div>
     </div>
-    <label>Stress level?</label>
-    <select>
-      <option value="">Select…</option>
-      <option>Low</option>
-      <option>Moderate</option>
-      <option>High</option>
-      <option>Very high</option>
-    </select>
-    <label>If stressful, what do you do to de-stress?</label>
-    <input type="text" placeholder="e.g. Wine, walks, TV, nothing…">
+    <label>Stress level</label>
+    <select><option value="">Select…</option><option>Low</option><option>Moderate</option><option>High</option><option>Very high</option></select>
+    <label>De-stress methods</label><input type="text" placeholder="e.g. Wine, walks, TV, nothing…">
   </div>
-
   <div class="card">
-    <div class="card-title">🍳 First Meal</div>
-    <label>What time?</label>
-    <input type="text" placeholder="e.g. 7 AM, 10 AM, skip breakfast…">
-    <label>What is it? (Get ingredients / nutritional value)</label>
-    <textarea placeholder="e.g. Skyr with berries, eggs and toast, protein shake…" style="min-height:55px"></textarea>
+    <div class="card-title">🍽️ Nutrition</div>
+    <label>First meal — time & what</label><textarea placeholder="Time, contents…" style="min-height:55px"></textarea>
     <div class="row-2">
-      <div>
-        <label>First glass of water?</label>
-        <input type="text" placeholder="e.g. With breakfast, noon…">
-      </div>
-      <div>
-        <label>How much water/day?</label>
-        <input type="text" placeholder="e.g. 32 oz, barely any">
-      </div>
+      <div><label>First water of day</label><input type="text" placeholder="e.g. 10 AM"></div>
+      <div><label>Water/day (oz or L)</label><input type="text" placeholder="e.g. 32 oz"></div>
     </div>
-    <label>Caffeine? How much?</label>
-    <input type="text" placeholder="e.g. 2 cups black coffee, diet soda, none…">
+    <label>Caffeine — what & how much</label><input type="text" placeholder="e.g. 2 cups coffee, no sugar">
+    <label>Lunch — time, location, what</label><textarea placeholder="At desk? Out? Multitask while eating?" style="min-height:55px"></textarea>
+    <label>Dinner — time, location, what</label><textarea placeholder="Table? TV? Go out? Alcohol?" style="min-height:55px"></textarea>
+    <label>Snacks / sweets</label><input type="text" placeholder="e.g. Afternoon chips, evening ice cream…">
+    <label>Additional nutrition notes</label><textarea placeholder="Potassium, supplements, etc." style="min-height:55px"></textarea>
   </div>
-
   <div class="card">
-    <div class="card-title">🥗 Next Meal / Lunch</div>
-    <label>What time? How long do you take?</label>
-    <input type="text" placeholder="e.g. 12:30, 20 min">
-    <label>Where? Multitask? Go out?</label>
-    <input type="text" placeholder="e.g. At desk while working, out with coworkers, home…">
-    <label>What is it? (Get ingredients / nutritional value) / Liquid?</label>
-    <textarea placeholder="e.g. Sandwich, salad, leftovers… include drinks" style="min-height:55px"></textarea>
-  </div>
-
-  <div class="card">
-    <div class="card-title">🍽️ Next Meal / Dinner</div>
-    <label>What time? How long do you take?</label>
-    <input type="text" placeholder="e.g. 7 PM, 45 min">
-    <label>Where? At table? In front of TV or computer? Go out?</label>
-    <input type="text" placeholder="e.g. TV tray, kitchen table, restaurant 3x week…">
-    <label>What is it? (Get ingredients / nutritional value) / Liquid?</label>
-    <textarea placeholder="e.g. Chicken and veg, takeout, pasta… include drinks" style="min-height:55px"></textarea>
-  </div>
-
-  <div class="card">
-    <div class="card-title">🍫 Snacks, Sweets & Extras</div>
-    <label>Alcohol?</label>
-    <input type="text" placeholder="e.g. Wine with dinner, occasional, none…">
-    <label>Snacks?</label>
-    <input type="text" placeholder="e.g. Chips in the afternoon, protein bar…">
-    <label>Sweets?</label>
-    <input type="text" placeholder="e.g. Ice cream after dinner, chocolate…">
-    <div class="alert-box" style="margin-top:12px"><strong>NOTE:</strong> Ask additional questions depending on specific goal! (e.g. potassium intake to avoid cramping/DOMS)</div>
-    <label>Goal-specific nutrition notes</label>
-    <textarea placeholder="e.g. Potassium sources? Protein timing? Pre/post workout nutrition?" style="min-height:55px"></textarea>
-  </div>
-
-  <div class="card">
-    <div class="card-title">🏋️ Current Workout Schedule</div>
-    <label>What does your current workout schedule look like?</label>
-    <textarea placeholder="Overview in their words…" style="min-height:55px"></textarea>
+    <div class="card-title">🏋️ Current Training</div>
     <div class="row-2">
-      <div>
-        <label>Days/week</label>
-        <input type="number" placeholder="days">
-      </div>
-      <div>
-        <label>How long you been training?</label>
-        <input type="text" placeholder="e.g. 2 years, never…">
-      </div>
+      <div><label>Days/week training</label><input type="number" placeholder="days"></div>
+      <div><label>How long training?</label><input type="text" placeholder="e.g. 2 years, never"></div>
     </div>
-    <label>Modalities / Reps / Sets etc.</label>
-    <input type="text" placeholder="e.g. Treadmill 3x, weights 2x, yoga 1x…">
-    <label>Current Split?</label>
-    <input type="text" placeholder="e.g. Upper/lower, push/pull, full body, none…">
+    <label>Current modalities</label><input type="text" placeholder="e.g. Treadmill, yoga, group classes, nothing…">
+    <label>Current split / reps / sets</label><textarea placeholder="e.g. Upper/lower split, 3x10, machine-based…" style="min-height:55px"></textarea>
+    <label>How do they feel after working out?</label><input type="text" placeholder="e.g. Great, exhausted, in pain…">
+    <label>Results so far</label><textarea placeholder="What's working? What isn't?" style="min-height:55px"></textarea>
+    <label>Opportunities spotted</label><textarea placeholder="e.g. Yoga for flexibility, stretching for ROM…" style="min-height:55px"></textarea>
   </div>
-
-  <div class="card">
-    <div class="card-title">💪 Training Results & Opportunities</div>
-    <label>How do you feel afterward?</label>
-    <input type="text" placeholder="e.g. Great, exhausted, sore, unmotivated…">
-    <label>What kind of results have you been getting?</label>
-    <textarea placeholder="What's working? What isn't?" style="min-height:55px"></textarea>
-    <label>Opportunities spotted</label>
-    <textarea placeholder="e.g. yoga for flexibility, stretching for ROM, overactive muscles…" style="min-height:55px"></textarea>
-  </div>
-
   <div class="card">
     <div class="card-title">😊 Fun / Relaxation</div>
-    <label>What do you do for fun or relaxation?</label>
-    <textarea placeholder="Hobbies, family, travel, creative outlets… note anything you can use to connect"></textarea>
+    <label>What do they do for fun or relaxation?</label>
+    <textarea placeholder="Hobbies, family activities, travel…"></textarea>
   </div>
-
   <div class="card">
     <div class="card-title">✅ Reflective Summation</div>
-    <div class="alert-box">
-      Summarize everything back to the client in their own words, then ask: <strong>"Is that correct?"</strong> — Wait for full confirmation before moving to InBody.
-    </div>
-    <div class="checklist-item">
-      <div class="check-box" onclick="toggleCheck(this)"></div>
-      <div class="check-text">Summation delivered — client confirmed</div>
-    </div>
+    <div class="alert-box">Summarize everything back to the client in their own words, then ask: <strong>"Is that correct?"</strong> — Wait for full confirmation before proceeding.</div>
+    <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-text">Summation delivered — client confirmed</div></div>
     <label>Key themes / hooks to carry through the session</label>
     <textarea placeholder="What matters most to this person? What will motivate them?"></textarea>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════
-     TAB 3: INBODY
-══════════════════════════════════════════════════ -->
+<!-- ══════════════ TAB 3: INBODY ══════════════ -->
 <div id="tab-inbody" class="section">
-
-  <div class="alert-box">
-    <strong>Code: 0716</strong> — Optimal body water = 55%. Explain 100% = optimal baseline, then walk through each number as it relates to <em>this client's specific goals</em>. Start with the pros.
-  </div>
-
+  <div class="alert-box"><strong>Code: 0716</strong> — Optimal body water = 55%. Explain 100% = optimal baseline, then walk through each number as it relates to <em>this client's specific goals</em>. Start with the pros.</div>
   <div class="card">
     <div class="card-title">📊 InBody Results</div>
     <div class="inbody-grid">
-      <div class="inbody-item">
-        <label>Weight (lbs)</label>
-        <input type="text" placeholder="—">
-      </div>
-      <div class="inbody-item">
-        <label>BMI</label>
-        <input type="text" placeholder="—">
-      </div>
-      <div class="inbody-item">
-        <label>Body Fat %</label>
-        <input type="text" placeholder="—">
-      </div>
-      <div class="inbody-item">
-        <label>Fat Mass (lbs)</label>
-        <input type="text" placeholder="—">
-      </div>
-      <div class="inbody-item">
-        <label>Skeletal Muscle Mass</label>
-        <input type="text" placeholder="—">
-      </div>
-      <div class="inbody-item">
-        <label>Body Water %</label>
-        <input type="text" placeholder="—">
-      </div>
-      <div class="inbody-item">
-        <label>BMR (kcal)</label>
-        <input type="text" placeholder="—">
-      </div>
-      <div class="inbody-item">
-        <label>Visceral Fat Level</label>
-        <input type="text" placeholder="—">
-      </div>
+      <div class="inbody-item"><label>Weight (lbs)</label><input type="text" placeholder="—"></div>
+      <div class="inbody-item"><label>BMI</label><input type="text" placeholder="—"></div>
+      <div class="inbody-item"><label>Body Fat %</label><input type="text" placeholder="—"></div>
+      <div class="inbody-item"><label>Fat Mass (lbs)</label><input type="text" placeholder="—"></div>
+      <div class="inbody-item"><label>Skeletal Muscle Mass</label><input type="text" placeholder="—"></div>
+      <div class="inbody-item"><label>Body Water %</label><input type="text" placeholder="—"></div>
+      <div class="inbody-item"><label>BMR (kcal)</label><input type="text" placeholder="—"></div>
+      <div class="inbody-item"><label>Visceral Fat Level</label><input type="text" placeholder="—"></div>
     </div>
   </div>
-
   <div class="card">
     <div class="card-title">🦵 Segmental Lean Analysis</div>
-    <div class="alert-box"><strong>Important:</strong> Explaining segmental lean is super important — walk through R/L balance and what it means for their program.</div>
+    <div class="alert-box"><strong>Important:</strong> Walk through R/L balance and what it means for their program.</div>
     <div class="row-3">
-      <div>
-        <label>Right Arm %</label>
-        <input type="text" placeholder="—">
-      </div>
-      <div>
-        <label>Left Arm %</label>
-        <input type="text" placeholder="—">
-      </div>
-      <div>
-        <label>Trunk %</label>
-        <input type="text" placeholder="—">
-      </div>
-      <div>
-        <label>Right Leg %</label>
-        <input type="text" placeholder="—">
-      </div>
-      <div>
-        <label>Left Leg %</label>
-        <input type="text" placeholder="—">
-      </div>
-      <div>
-        <label>Dominant side</label>
-        <input type="text" placeholder="R / L">
-      </div>
+      <div><label>Right Arm %</label><input type="text" placeholder="—"></div>
+      <div><label>Left Arm %</label><input type="text" placeholder="—"></div>
+      <div><label>Trunk %</label><input type="text" placeholder="—"></div>
+      <div><label>Right Leg %</label><input type="text" placeholder="—"></div>
+      <div><label>Left Leg %</label><input type="text" placeholder="—"></div>
+      <div><label>Dominant side</label><input type="text" placeholder="R / L"></div>
     </div>
     <label>Imbalances / notes</label>
-    <textarea placeholder="e.g. L leg significantly stronger → tightness in R leg. Contralateral dominance noted…"></textarea>
+    <textarea placeholder="e.g. L leg significantly stronger → tightness in R leg…"></textarea>
   </div>
-
   <div class="card">
     <div class="card-title">📈 Goals & Program Formula</div>
-    <div class="alert-box">
-      <strong>Formula:</strong> ~1 week per 1 lb fat loss · ~1 month per 1 lb muscle gain. Use to determine program length and adjustments needed.
-    </div>
+    <div class="alert-box"><strong>Formula:</strong> ~1 week per 1 lb fat loss · ~1 month per 1 lb muscle gain.</div>
     <div class="row-2">
-      <div>
-        <label>Fat loss target (lbs)</label>
-        <input type="number" placeholder="lbs" id="fatTarget">
-      </div>
-      <div>
-        <label>Muscle gain target (lbs)</label>
-        <input type="number" placeholder="lbs" id="muscleTarget">
-      </div>
+      <div><label>Fat loss target (lbs)</label><input type="number" placeholder="lbs" id="fatTarget"></div>
+      <div><label>Muscle gain target (lbs)</label><input type="number" placeholder="lbs" id="muscleTarget"></div>
     </div>
     <label>Estimated program length</label>
     <input type="text" id="programLength" placeholder="Calculated below" readonly style="background:#f0f0f0; color:#888;">
     <label>Caloric adjustment needed</label>
-    <select>
-      <option value="">Select…</option>
-      <option>Increase (hypertrophy focus)</option>
-      <option>Decrease (fat loss focus)</option>
-      <option>Maintain</option>
-      <option>Recomp (slight deficit)</option>
-    </select>
+    <select><option value="">Select…</option><option>Increase (hypertrophy focus)</option><option>Decrease (fat loss focus)</option><option>Maintain</option><option>Recomp (slight deficit)</option></select>
     <label>InBody coaching notes</label>
     <textarea placeholder="How did client react? What stood out? Opportunities?"></textarea>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════
-     TAB 4: FMS SCREEN
-══════════════════════════════════════════════════ -->
+<!-- ══════════════ TAB 4: FMS SCREEN ══════════════ -->
 <div id="tab-fms" class="section">
-
   <div class="alert-box">
-    <strong>⚠️ READ CUES FROM THE DOCUMENT.</strong> Score 3 = optimal · 2 = compensating · 1 = unable · 0 = pain present. Score 0 if any pain. Score the weakest side for bilateral tests.
+    <strong>⚠️ See it · Name it · Feed it · Stack it · Layer it</strong><br>
+    Score 3 = optimal · 2 = compensating · 1 = unable · 0 = pain. Score weakest side on bilateral tests.<br>
+    Observe: <em>Where does the Pelvis | Rib Cage | Scapula lose alignment? Where does rotation become excessive or absent?</em>
   </div>
 
   <!-- 1. DEEP SQUAT -->
   <div class="card">
     <div class="card-title">1 · Deep Squat (OHSA)</div>
     <div class="fms-test" id="fms1">
-      <div class="fms-test-title">Overhead Squat Assessment</div>
+      <div class="fms-test-title">Stack Pelvis | Rib Cage | Scapula. Watch for where rotation leaks.</div>
       <div class="score-buttons">
-        <div class="score-btn" onclick="setScore('fms1', 3, this)">3</div>
-        <div class="score-btn" onclick="setScore('fms1', 2, this)">2</div>
-        <div class="score-btn" onclick="setScore('fms1', 1, this)">1</div>
-        <div class="score-btn" onclick="setScore('fms1', 0, this)">0</div>
+        <div class="score-btn" onclick="setScore('fms1',3,this)">3</div>
+        <div class="score-btn" onclick="setScore('fms1',2,this)">2</div>
+        <div class="score-btn" onclick="setScore('fms1',1,this)">1</div>
+        <div class="score-btn" onclick="setScore('fms1',0,this)">0</div>
       </div>
-      <label>Comments</label>
-      <textarea placeholder="Heel elevation? Valgus collapse? Torso lean? Forward head?"></textarea>
+      <div class="obs-section">
+        <div class="obs-group">
+          <div class="obs-group-label">Hip / Femur</div>
+          <div class="obs-buttons">
+            <button class="obs-btn" onclick="toggleObs(this)">R femur excess ext. rotation</button>
+            <button class="obs-btn" onclick="toggleObs(this)">L femur excess ext. rotation</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Both femurs ext. rotated (feet turn out)</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Both femurs int. rotated (knees cave)</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Heel elevation</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Hip shift (asymmetrical)</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Adductors inactive</button>
+          </div>
+        </div>
+        <div class="obs-group">
+          <div class="obs-group-label">Pelvis / Torso</div>
+          <div class="obs-buttons">
+            <button class="obs-btn" onclick="toggleObs(this)">Rib cage not stacked over pelvis</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Forward torso lean / squat → hinge</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Torso rotates R</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Torso rotates L</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Lumbar extension</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Low back rounds</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Pelvis tilts / shifts</button>
+          </div>
+        </div>
+        <div class="obs-group">
+          <div class="obs-group-label">Shoulder / Scapula</div>
+          <div class="obs-buttons">
+            <button class="obs-btn" onclick="toggleObs(this)">Arms fall forward</button>
+            <button class="obs-btn" onclick="toggleObs(this)">R shoulder ext. rotated</button>
+            <button class="obs-btn" onclick="toggleObs(this)">L shoulder ext. rotated</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Scapula not anchored to rib cage</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Shoulders rise to ears</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Forward head</button>
+          </div>
+        </div>
+      </div>
+      <label>Additional notes</label>
+      <textarea placeholder="Name the dysfunction: e.g. 'R femur excess ext. rotation → pelvis follows → torso rotates L'" style="min-height:50px"></textarea>
     </div>
   </div>
 
@@ -859,30 +431,60 @@
   <div class="card">
     <div class="card-title">2 · Hurdle Step</div>
     <div class="fms-test" id="fms2">
+      <div class="fms-test-title">Single-leg stability. Watch glute med, frontal plane pelvic control.</div>
       <div class="bilateral-scores">
         <div>
           <div class="side-label">RIGHT (moving leg)</div>
           <div class="score-buttons">
-            <div class="score-btn" onclick="setScore('fms2R', 3, this)">3</div>
-            <div class="score-btn" onclick="setScore('fms2R', 2, this)">2</div>
-            <div class="score-btn" onclick="setScore('fms2R', 1, this)">1</div>
-            <div class="score-btn" onclick="setScore('fms2R', 0, this)">0</div>
+            <div class="score-btn" onclick="setScore('fms2R',3,this)">3</div>
+            <div class="score-btn" onclick="setScore('fms2R',2,this)">2</div>
+            <div class="score-btn" onclick="setScore('fms2R',1,this)">1</div>
+            <div class="score-btn" onclick="setScore('fms2R',0,this)">0</div>
           </div>
         </div>
         <div>
           <div class="side-label">LEFT (moving leg)</div>
           <div class="score-buttons">
-            <div class="score-btn" onclick="setScore('fms2L', 3, this)">3</div>
-            <div class="score-btn" onclick="setScore('fms2L', 2, this)">2</div>
-            <div class="score-btn" onclick="setScore('fms2L', 1, this)">1</div>
-            <div class="score-btn" onclick="setScore('fms2L', 0, this)">0</div>
+            <div class="score-btn" onclick="setScore('fms2L',3,this)">3</div>
+            <div class="score-btn" onclick="setScore('fms2L',2,this)">2</div>
+            <div class="score-btn" onclick="setScore('fms2L',1,this)">1</div>
+            <div class="score-btn" onclick="setScore('fms2L',0,this)">0</div>
           </div>
         </div>
       </div>
       <label>Final Score (lowest side)</label>
       <input type="text" id="fms2-final" placeholder="Auto: take lower of R/L" readonly style="background:#f0f0f0">
-      <label>Comments</label>
-      <textarea placeholder="Hip hike? Lumbar shift? Dowel/hurdle parallel?"></textarea>
+      <div class="obs-section">
+        <div class="obs-group">
+          <div class="obs-group-label">Pelvis / Hip (stance leg)</div>
+          <div class="obs-buttons">
+            <button class="obs-btn" onclick="toggleObs(this)">Hip hike (stance side)</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Stance femur excess ext. rotation</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Stance femur excess int. rotation</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Glute med not controlling pelvis</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Pelvis drops contralateral side</button>
+          </div>
+        </div>
+        <div class="obs-group">
+          <div class="obs-group-label">Torso / Rib Cage</div>
+          <div class="obs-buttons">
+            <button class="obs-btn" onclick="toggleObs(this)">Lumbar shift</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Torso rotation</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Rib cage not stacked over pelvis</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Dowel not parallel (arms off)</button>
+          </div>
+        </div>
+        <div class="obs-group">
+          <div class="obs-group-label">Mechanics</div>
+          <div class="obs-buttons">
+            <button class="obs-btn" onclick="toggleObs(this)">Hurdle contact</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Stance foot moves</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Balance loss</button>
+          </div>
+        </div>
+      </div>
+      <label>Additional notes</label>
+      <textarea placeholder="Name the dysfunction…" style="min-height:50px"></textarea>
     </div>
   </div>
 
@@ -890,32 +492,64 @@
   <div class="card">
     <div class="card-title">3 · Inline Lunge</div>
     <div class="fms-test" id="fms3">
+      <div class="fms-test-title">Frontal + transverse plane control under sagittal load. Hip and torso rotation.</div>
       <label>Tibial length measurement</label>
       <input type="text" placeholder='e.g. 16"'>
       <div class="bilateral-scores" style="margin-top:10px">
         <div>
           <div class="side-label">RIGHT (front foot)</div>
           <div class="score-buttons">
-            <div class="score-btn" onclick="setScore('fms3R', 3, this)">3</div>
-            <div class="score-btn" onclick="setScore('fms3R', 2, this)">2</div>
-            <div class="score-btn" onclick="setScore('fms3R', 1, this)">1</div>
-            <div class="score-btn" onclick="setScore('fms3R', 0, this)">0</div>
+            <div class="score-btn" onclick="setScore('fms3R',3,this)">3</div>
+            <div class="score-btn" onclick="setScore('fms3R',2,this)">2</div>
+            <div class="score-btn" onclick="setScore('fms3R',1,this)">1</div>
+            <div class="score-btn" onclick="setScore('fms3R',0,this)">0</div>
           </div>
         </div>
         <div>
           <div class="side-label">LEFT (front foot)</div>
           <div class="score-buttons">
-            <div class="score-btn" onclick="setScore('fms3L', 3, this)">3</div>
-            <div class="score-btn" onclick="setScore('fms3L', 2, this)">2</div>
-            <div class="score-btn" onclick="setScore('fms3L', 1, this)">1</div>
-            <div class="score-btn" onclick="setScore('fms3L', 0, this)">0</div>
+            <div class="score-btn" onclick="setScore('fms3L',3,this)">3</div>
+            <div class="score-btn" onclick="setScore('fms3L',2,this)">2</div>
+            <div class="score-btn" onclick="setScore('fms3L',1,this)">1</div>
+            <div class="score-btn" onclick="setScore('fms3L',0,this)">0</div>
           </div>
         </div>
       </div>
       <label>Final Score (lowest side)</label>
       <input type="text" id="fms3-final" placeholder="Auto: take lower of R/L" readonly style="background:#f0f0f0">
-      <label>Comments</label>
-      <textarea placeholder="Dowel contact lost? Torso shift? Balance off board?"></textarea>
+      <div class="obs-section">
+        <div class="obs-group">
+          <div class="obs-group-label">Hip / Femur</div>
+          <div class="obs-buttons">
+            <button class="obs-btn" onclick="toggleObs(this)">Front femur excess ext. rotation</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Front femur excess int. rotation (knee cave)</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Rear femur excess ext. rotation</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Hip abduction / flare</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Loss of hip centration</button>
+          </div>
+        </div>
+        <div class="obs-group">
+          <div class="obs-group-label">Pelvis / Torso</div>
+          <div class="obs-buttons">
+            <button class="obs-btn" onclick="toggleObs(this)">Torso shift R</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Torso shift L</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Torso rotation</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Rib cage not stacked</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Lumbar extension</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Dowel contact lost</button>
+          </div>
+        </div>
+        <div class="obs-group">
+          <div class="obs-group-label">Mechanics</div>
+          <div class="obs-buttons">
+            <button class="obs-btn" onclick="toggleObs(this)">Foot off board</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Balance loss</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Asymmetry R vs L</button>
+          </div>
+        </div>
+      </div>
+      <label>Additional notes</label>
+      <textarea placeholder="Name the dysfunction…" style="min-height:50px"></textarea>
     </div>
   </div>
 
@@ -923,77 +557,132 @@
   <div class="card">
     <div class="card-title">4 · Shoulder Mobility</div>
     <div class="fms-test" id="fms4">
-      <label>Hand length measurement (right hand, distal crease to longest digit)</label>
+      <div class="fms-test-title">Scapular mobility + humerus rotation. Note: opposite hip/shoulder pattern applies.</div>
+      <label>Hand length (distal crease to longest digit)</label>
       <input type="text" placeholder='e.g. 7"'>
       <div class="bilateral-scores" style="margin-top:10px">
         <div>
           <div class="side-label">RIGHT (top shoulder)</div>
           <div class="score-buttons">
-            <div class="score-btn" onclick="setScore('fms4R', 3, this)">3</div>
-            <div class="score-btn" onclick="setScore('fms4R', 2, this)">2</div>
-            <div class="score-btn" onclick="setScore('fms4R', 1, this)">1</div>
-            <div class="score-btn" onclick="setScore('fms4R', 0, this)">0</div>
+            <div class="score-btn" onclick="setScore('fms4R',3,this)">3</div>
+            <div class="score-btn" onclick="setScore('fms4R',2,this)">2</div>
+            <div class="score-btn" onclick="setScore('fms4R',1,this)">1</div>
+            <div class="score-btn" onclick="setScore('fms4R',0,this)">0</div>
           </div>
         </div>
         <div>
           <div class="side-label">LEFT (top shoulder)</div>
           <div class="score-buttons">
-            <div class="score-btn" onclick="setScore('fms4L', 3, this)">3</div>
-            <div class="score-btn" onclick="setScore('fms4L', 2, this)">2</div>
-            <div class="score-btn" onclick="setScore('fms4L', 1, this)">1</div>
-            <div class="score-btn" onclick="setScore('fms4L', 0, this)">0</div>
+            <div class="score-btn" onclick="setScore('fms4L',3,this)">3</div>
+            <div class="score-btn" onclick="setScore('fms4L',2,this)">2</div>
+            <div class="score-btn" onclick="setScore('fms4L',1,this)">1</div>
+            <div class="score-btn" onclick="setScore('fms4L',0,this)">0</div>
           </div>
         </div>
       </div>
       <label>Final Score (lowest side)</label>
       <input type="text" id="fms4-final" placeholder="Auto: take lower of R/L" readonly style="background:#f0f0f0">
+      <div class="obs-section">
+        <div class="obs-group">
+          <div class="obs-group-label">Scapula / Shoulder</div>
+          <div class="obs-buttons">
+            <button class="obs-btn" onclick="toggleObs(this)">R shoulder excess ext. rotation</button>
+            <button class="obs-btn" onclick="toggleObs(this)">L shoulder excess ext. rotation</button>
+            <button class="obs-btn" onclick="toggleObs(this)">R shoulder int. rotation limited</button>
+            <button class="obs-btn" onclick="toggleObs(this)">L shoulder int. rotation limited</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Scapula not anchored to rib cage</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Serratus anterior inactive</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Scapular winging</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Upward rotation limited</button>
+          </div>
+        </div>
+        <div class="obs-group">
+          <div class="obs-group-label">Neck / Rib Cage</div>
+          <div class="obs-buttons">
+            <button class="obs-btn" onclick="toggleObs(this)">Shoulders rise to ears (neck tension)</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Rib cage flares / not stacked</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Upper crossed pattern</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Notable asymmetry R vs L</button>
+          </div>
+        </div>
+      </div>
       <div class="clearing-row">
         <div class="clearing-label">Shoulder Clearing Test — R</div>
         <div class="pain-toggle">
-          <button class="pain-btn pos" onclick="togglePain(this, 'sc-R')">+ Pain</button>
-          <button class="pain-btn neg" onclick="togglePain(this, 'sc-R')">− Clear</button>
+          <button class="pain-btn pos" onclick="togglePain(this)">+ Pain</button>
+          <button class="pain-btn neg" onclick="togglePain(this)">− Clear</button>
         </div>
       </div>
       <div class="clearing-row">
         <div class="clearing-label">Shoulder Clearing Test — L</div>
         <div class="pain-toggle">
-          <button class="pain-btn pos" onclick="togglePain(this, 'sc-L')">+ Pain</button>
-          <button class="pain-btn neg" onclick="togglePain(this, 'sc-L')">− Clear</button>
+          <button class="pain-btn pos" onclick="togglePain(this)">+ Pain</button>
+          <button class="pain-btn neg" onclick="togglePain(this)">− Clear</button>
         </div>
       </div>
-      <label>Comments</label>
-      <textarea placeholder="Upper crossed? Internal rotation limited? Asymmetry?"></textarea>
+      <label>Additional notes</label>
+      <textarea placeholder="Name the dysfunction. Note: L femur ext. rotation = R shoulder ext. rotation (opposite hip/shoulder pattern)" style="min-height:50px"></textarea>
     </div>
   </div>
 
   <!-- 5. ACTIVE STRAIGHT-LEG RAISE -->
   <div class="card">
-    <div class="card-title">5 · Active Straight-Leg Raise</div>
+    <div class="card-title">5 · Active Straight-Leg Raise (ASLR)</div>
     <div class="fms-test" id="fms5">
+      <div class="fms-test-title">Pelvis orientation + hip control. Watch femur rotation and pelvic stability.</div>
       <div class="bilateral-scores">
         <div>
           <div class="side-label">RIGHT (moving leg)</div>
           <div class="score-buttons">
-            <div class="score-btn" onclick="setScore('fms5R', 3, this)">3</div>
-            <div class="score-btn" onclick="setScore('fms5R', 2, this)">2</div>
-            <div class="score-btn" onclick="setScore('fms5R', 1, this)">1</div>
-            <div class="score-btn" onclick="setScore('fms5R', 0, this)">0</div>
+            <div class="score-btn" onclick="setScore('fms5R',3,this)">3</div>
+            <div class="score-btn" onclick="setScore('fms5R',2,this)">2</div>
+            <div class="score-btn" onclick="setScore('fms5R',1,this)">1</div>
+            <div class="score-btn" onclick="setScore('fms5R',0,this)">0</div>
           </div>
         </div>
         <div>
           <div class="side-label">LEFT (moving leg)</div>
           <div class="score-buttons">
-            <div class="score-btn" onclick="setScore('fms5L', 3, this)">3</div>
-            <div class="score-btn" onclick="setScore('fms5L', 2, this)">2</div>
-            <div class="score-btn" onclick="setScore('fms5L', 1, this)">1</div>
-            <div class="score-btn" onclick="setScore('fms5L', 0, this)">0</div>
+            <div class="score-btn" onclick="setScore('fms5L',3,this)">3</div>
+            <div class="score-btn" onclick="setScore('fms5L',2,this)">2</div>
+            <div class="score-btn" onclick="setScore('fms5L',1,this)">1</div>
+            <div class="score-btn" onclick="setScore('fms5L',0,this)">0</div>
           </div>
         </div>
       </div>
       <label>Final Score (lowest side)</label>
       <input type="text" id="fms5-final" placeholder="Auto: take lower of R/L" readonly style="background:#f0f0f0">
-      <label>Comments</label>
-      <textarea placeholder="Malleolus position? Non-moving limb neutral?"></textarea>
+      <div class="obs-section">
+        <div class="obs-group">
+          <div class="obs-group-label">Moving Leg / Hip</div>
+          <div class="obs-buttons">
+            <button class="obs-btn" onclick="toggleObs(this)">Moving femur excess ext. rotation</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Moving femur excess int. rotation</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Hip flexion limited (malleolus below midline)</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Hip adductors not engaged</button>
+          </div>
+        </div>
+        <div class="obs-group">
+          <div class="obs-group-label">Stance Leg / Pelvis</div>
+          <div class="obs-buttons">
+            <button class="obs-btn" onclick="toggleObs(this)">Stance femur rotates</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Stance leg lifts off floor</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Glutes not engaged (stance)</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Pelvis rotates / tilts</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Low back lifts from floor</button>
+          </div>
+        </div>
+        <div class="obs-group">
+          <div class="obs-group-label">Asymmetry</div>
+          <div class="obs-buttons">
+            <button class="obs-btn" onclick="toggleObs(this)">R significantly worse than L</button>
+            <button class="obs-btn" onclick="toggleObs(this)">L significantly worse than R</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Hamstring tightness noted</button>
+          </div>
+        </div>
+      </div>
+      <label>Additional notes</label>
+      <textarea placeholder="Name the dysfunction…" style="min-height:50px"></textarea>
     </div>
   </div>
 
@@ -1001,29 +690,58 @@
   <div class="card">
     <div class="card-title">6 · Trunk Stability Push-Up</div>
     <div class="fms-test" id="fms6">
-      <div class="fms-test-title">Start position: Women = thumbs at chin · Men = thumbs at forehead</div>
+      <div class="fms-test-title">Women: thumbs at chin · Men: thumbs at forehead. Rib cage control under load.</div>
       <div class="score-buttons">
-        <div class="score-btn" onclick="setScore('fms6', 3, this)">3</div>
-        <div class="score-btn" onclick="setScore('fms6', 2, this)">2</div>
-        <div class="score-btn" onclick="setScore('fms6', 1, this)">1</div>
-        <div class="score-btn" onclick="setScore('fms6', 0, this)">0</div>
+        <div class="score-btn" onclick="setScore('fms6',3,this)">3</div>
+        <div class="score-btn" onclick="setScore('fms6',2,this)">2</div>
+        <div class="score-btn" onclick="setScore('fms6',1,this)">1</div>
+        <div class="score-btn" onclick="setScore('fms6',0,this)">0</div>
+      </div>
+      <div class="obs-section">
+        <div class="obs-group">
+          <div class="obs-group-label">Rib Cage / Trunk</div>
+          <div class="obs-buttons">
+            <button class="obs-btn" onclick="toggleObs(this)">Rib cage not stacked (spine lag/sag)</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Obliques not controlling rib cage</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Lumbar extension under load</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Trunk rotation during press</button>
+          </div>
+        </div>
+        <div class="obs-group">
+          <div class="obs-group-label">Scapula / Shoulder</div>
+          <div class="obs-buttons">
+            <button class="obs-btn" onclick="toggleObs(this)">Serratus anterior inactive</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Scapula not wrapping rib cage</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Scapular winging</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Shoulders rise to ears</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Head drops forward</button>
+          </div>
+        </div>
+        <div class="obs-group">
+          <div class="obs-group-label">Performance</div>
+          <div class="obs-buttons">
+            <button class="obs-btn" onclick="toggleObs(this)">Dropped to 2nd position</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Hip hike</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Unable to perform</button>
+          </div>
+        </div>
       </div>
       <div class="clearing-row">
         <div class="clearing-label">Extension Clearing (Cobra) — R</div>
         <div class="pain-toggle">
-          <button class="pain-btn pos" onclick="togglePain(this, 'ec-R')">+ Pain</button>
-          <button class="pain-btn neg" onclick="togglePain(this, 'ec-R')">− Clear</button>
+          <button class="pain-btn pos" onclick="togglePain(this)">+ Pain</button>
+          <button class="pain-btn neg" onclick="togglePain(this)">− Clear</button>
         </div>
       </div>
       <div class="clearing-row">
         <div class="clearing-label">Extension Clearing (Cobra) — L</div>
         <div class="pain-toggle">
-          <button class="pain-btn pos" onclick="togglePain(this, 'ec-L')">+ Pain</button>
-          <button class="pain-btn neg" onclick="togglePain(this, 'ec-L')">− Clear</button>
+          <button class="pain-btn pos" onclick="togglePain(this)">+ Pain</button>
+          <button class="pain-btn neg" onclick="togglePain(this)">− Clear</button>
         </div>
       </div>
-      <label>Comments</label>
-      <textarea placeholder="Spine lag? Hip hike? Had to drop to second position?"></textarea>
+      <label>Additional notes</label>
+      <textarea placeholder="Name the dysfunction…" style="min-height:50px"></textarea>
     </div>
   </div>
 
@@ -1031,101 +749,131 @@
   <div class="card">
     <div class="card-title">7 · Rotary Stability</div>
     <div class="fms-test" id="fms7">
+      <div class="fms-test-title">Full chain integration. Pelvis | Rib Cage | Scapula stacked under anti-rotation demand.</div>
       <div class="bilateral-scores">
         <div>
           <div class="side-label">RIGHT (upper moving limb)</div>
           <div class="score-buttons">
-            <div class="score-btn" onclick="setScore('fms7R', 3, this)">3</div>
-            <div class="score-btn" onclick="setScore('fms7R', 2, this)">2</div>
-            <div class="score-btn" onclick="setScore('fms7R', 1, this)">1</div>
-            <div class="score-btn" onclick="setScore('fms7R', 0, this)">0</div>
+            <div class="score-btn" onclick="setScore('fms7R',3,this)">3</div>
+            <div class="score-btn" onclick="setScore('fms7R',2,this)">2</div>
+            <div class="score-btn" onclick="setScore('fms7R',1,this)">1</div>
+            <div class="score-btn" onclick="setScore('fms7R',0,this)">0</div>
           </div>
         </div>
         <div>
           <div class="side-label">LEFT (upper moving limb)</div>
           <div class="score-buttons">
-            <div class="score-btn" onclick="setScore('fms7L', 3, this)">3</div>
-            <div class="score-btn" onclick="setScore('fms7L', 2, this)">2</div>
-            <div class="score-btn" onclick="setScore('fms7L', 1, this)">1</div>
-            <div class="score-btn" onclick="setScore('fms7L', 0, this)">0</div>
+            <div class="score-btn" onclick="setScore('fms7L',3,this)">3</div>
+            <div class="score-btn" onclick="setScore('fms7L',2,this)">2</div>
+            <div class="score-btn" onclick="setScore('fms7L',1,this)">1</div>
+            <div class="score-btn" onclick="setScore('fms7L',0,this)">0</div>
           </div>
         </div>
       </div>
       <label>Final Score (lowest side)</label>
       <input type="text" id="fms7-final" placeholder="Auto: take lower of R/L" readonly style="background:#f0f0f0">
+      <div class="obs-section">
+        <div class="obs-group">
+          <div class="obs-group-label">Hip / Pelvis</div>
+          <div class="obs-buttons">
+            <button class="obs-btn" onclick="toggleObs(this)">Hip rotation excessive</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Pelvis rotates under load</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Glute med not stabilizing pelvis</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Adductors not engaged</button>
+          </div>
+        </div>
+        <div class="obs-group">
+          <div class="obs-group-label">Rib Cage / Torso</div>
+          <div class="obs-buttons">
+            <button class="obs-btn" onclick="toggleObs(this)">Torso / rib cage rotates</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Obliques not controlling rotation</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Rib cage not stacked over pelvis</button>
+          </div>
+        </div>
+        <div class="obs-group">
+          <div class="obs-group-label">Scapula / Shoulder</div>
+          <div class="obs-buttons">
+            <button class="obs-btn" onclick="toggleObs(this)">Scapula not anchored to rib cage</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Serratus anterior inactive</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Hip/shoulder alignment lost</button>
+          </div>
+        </div>
+        <div class="obs-group">
+          <div class="obs-group-label">Performance</div>
+          <div class="obs-buttons">
+            <button class="obs-btn" onclick="toggleObs(this)">Required diagonal pattern</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Balance loss</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Asymmetry R vs L</button>
+            <button class="obs-btn" onclick="toggleObs(this)">Unable to perform</button>
+          </div>
+        </div>
+      </div>
       <div class="clearing-row">
         <div class="clearing-label">Flexion Clearing (Child's Pose) — R</div>
         <div class="pain-toggle">
-          <button class="pain-btn pos" onclick="togglePain(this, 'fc-R')">+ Pain</button>
-          <button class="pain-btn neg" onclick="togglePain(this, 'fc-R')">− Clear</button>
+          <button class="pain-btn pos" onclick="togglePain(this)">+ Pain</button>
+          <button class="pain-btn neg" onclick="togglePain(this)">− Clear</button>
         </div>
       </div>
       <div class="clearing-row">
         <div class="clearing-label">Flexion Clearing (Child's Pose) — L</div>
         <div class="pain-toggle">
-          <button class="pain-btn pos" onclick="togglePain(this, 'fc-L')">+ Pain</button>
-          <button class="pain-btn neg" onclick="togglePain(this, 'fc-L')">− Clear</button>
+          <button class="pain-btn pos" onclick="togglePain(this)">+ Pain</button>
+          <button class="pain-btn neg" onclick="togglePain(this)">− Clear</button>
         </div>
       </div>
-      <label>Comments</label>
-      <textarea placeholder="Unilateral or required diagonal? Hip/shoulder alignment?"></textarea>
+      <label>Additional notes</label>
+      <textarea placeholder="Name the dysfunction…" style="min-height:50px"></textarea>
     </div>
   </div>
-
 </div>
 
-<!-- ══════════════════════════════════════════════════
-     TAB 5: SUMMARY
-══════════════════════════════════════════════════ -->
+<!-- ══════════════ TAB 5: SUMMARY ══════════════ -->
 <div id="tab-summary" class="section">
-
   <div class="score-summary">
     <div class="score-summary-title">FMS Score Summary</div>
     <div class="score-grid">
-      <div class="score-item">
-        <div class="score-item-label">Deep Squat</div>
-        <div class="score-item-value" id="sum-fms1">—</div>
-      </div>
-      <div class="score-item">
-        <div class="score-item-label">Hurdle Step</div>
-        <div class="score-item-value" id="sum-fms2">—</div>
-      </div>
-      <div class="score-item">
-        <div class="score-item-label">Inline Lunge</div>
-        <div class="score-item-value" id="sum-fms3">—</div>
-      </div>
-      <div class="score-item">
-        <div class="score-item-label">Shoulder Mob.</div>
-        <div class="score-item-value" id="sum-fms4">—</div>
-      </div>
-      <div class="score-item">
-        <div class="score-item-label">Leg Raise</div>
-        <div class="score-item-value" id="sum-fms5">—</div>
-      </div>
-      <div class="score-item">
-        <div class="score-item-label">TSPU</div>
-        <div class="score-item-value" id="sum-fms6">—</div>
-      </div>
-      <div class="score-item">
-        <div class="score-item-label">Rotary Stab.</div>
-        <div class="score-item-value" id="sum-fms7">—</div>
-      </div>
-      <div class="total-score score-item">
-        <div class="score-item-label">TOTAL / 21</div>
-        <div class="score-item-value" id="sum-total">—</div>
-      </div>
+      <div class="score-item"><div class="score-item-label">Deep Squat</div><div class="score-item-value" id="sum-fms1">—</div></div>
+      <div class="score-item"><div class="score-item-label">Hurdle Step</div><div class="score-item-value" id="sum-fms2">—</div></div>
+      <div class="score-item"><div class="score-item-label">Inline Lunge</div><div class="score-item-value" id="sum-fms3">—</div></div>
+      <div class="score-item"><div class="score-item-label">Shoulder Mob.</div><div class="score-item-value" id="sum-fms4">—</div></div>
+      <div class="score-item"><div class="score-item-label">Leg Raise</div><div class="score-item-value" id="sum-fms5">—</div></div>
+      <div class="score-item"><div class="score-item-label">TSPU</div><div class="score-item-value" id="sum-fms6">—</div></div>
+      <div class="score-item"><div class="score-item-label">Rotary Stab.</div><div class="score-item-value" id="sum-fms7">—</div></div>
+      <div class="total-score score-item"><div class="score-item-label">TOTAL / 21</div><div class="score-item-value" id="sum-total">—</div></div>
     </div>
   </div>
 
   <div class="card">
+    <div class="card-title">🔍 Dysfunction Pattern</div>
+    <div class="alert-box">
+      <strong>See it · Name it · Feed it · Stack it · Layer it</strong><br>
+      What pattern does the body show across movements?
+    </div>
+    <label>Primary pattern observed</label>
+    <select>
+      <option value="">Select dominant pattern…</option>
+      <option>Pattern 1 — One femur excess ext. rotation → opposite hip stuck in int. rotation + flexion</option>
+      <option>Pattern 2 — Both femurs ext. rotated (feet turn out) → loss of internal rotation / adductors inactive</option>
+      <option>Pattern 3 — Both femurs int. rotated (knees cave) → glutes not stabilizing pelvis</option>
+      <option>Pattern 4 — Torso forward collapse → rib cage not stacked over pelvis (often with int. rotated femurs)</option>
+      <option>Mixed / other — describe in notes</option>
+    </select>
+    <label>What the body needs (RNT direction)</label>
+    <textarea placeholder="e.g. Pattern 2 → need adductor engagement + hip internal rotation bilaterally. Start with ASLR + anti-rotation hold."></textarea>
+    <label>Warmup sequence to build</label>
+    <textarea placeholder="ASLR → Anti-Rotation Hold → Supported Hinge/SLRDL → Serratus Engagement → Suitcase/Front Rack Carry"></textarea>
+  </div>
+
+  <div class="card">
     <div class="card-title">📝 FMS Findings for Client</div>
-    <div class="alert-box">Score ≤ 14 = elevated injury risk. Frame findings positively: these are starting points, not deficits.</div>
-    <label>Key movement findings (in plain language for client)</label>
-    <textarea placeholder="e.g. Great shoulder mobility on left, right side has some restriction we can work on. Core stability is a key area of focus…"></textarea>
+    <div class="alert-box">Score ≤ 14 = elevated injury risk. Frame positively — these are starting points, not deficits.</div>
+    <label>Key movement findings (plain language for client)</label>
+    <textarea placeholder="e.g. Great shoulder mobility on left. Right side has some restriction we'll address. Core stability is a key area of focus…"></textarea>
     <label>How findings relate to their specific goals</label>
     <textarea placeholder="Connect the dots between what you saw and what they told you they want…"></textarea>
     <label>Priority correctives to address</label>
-    <textarea placeholder="Top 2-3 patterns to address in programming…"></textarea>
+    <textarea placeholder="Top 2-3 patterns from Steve's framework to address in programming…"></textarea>
   </div>
 
   <div class="card">
@@ -1135,17 +883,14 @@
     <label>Key motivators / hooks identified</label>
     <textarea placeholder="What matters most to them? What will get them to show up?"></textarea>
     <label>Red flags or referral considerations</label>
-    <textarea placeholder="Pain flags, medical history, anything to loop in Caroline about?"></textarea>
+    <textarea placeholder="Pain flags, medical history, anything to loop in re: interim supervision?"></textarea>
     <label>Follow-up actions</label>
-    <textarea placeholder="e.g. Send program outline, loop in Caroline re: pricing, schedule first session…"></textarea>
+    <textarea placeholder="e.g. Send program outline, schedule first session…"></textarea>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════
-     TAB 6: THE CLOSE
-══════════════════════════════════════════════════ -->
+<!-- ══════════════ TAB 6: THE CLOSE ══════════════ -->
 <div id="tab-close" class="section">
-
   <div class="close-highlight">
     <div class="close-script">
       "Based on what we discovered today, I'm confident that I can create a customized program based on your goal of <span>[                    ]</span>. My professional recommendation is <span>[  ] sessions/week</span> for <span>[        ]</span>."
@@ -1164,23 +909,11 @@
   <div class="card">
     <div class="card-title">📋 Close Plan</div>
     <div class="row-2">
-      <div>
-        <label>Recommended sessions/week</label>
-        <select>
-          <option value="">Select…</option>
-          <option>1x/week</option>
-          <option>2x/week</option>
-          <option>3x/week</option>
-        </select>
+      <div><label>Recommended sessions/week</label>
+        <select><option value="">Select…</option><option>1x/week</option><option>2x/week</option><option>3x/week</option></select>
       </div>
-      <div>
-        <label>Recommended package</label>
-        <select>
-          <option value="">Select…</option>
-          <option>Single sessions</option>
-          <option>12-pack</option>
-          <option>24-pack</option>
-        </select>
+      <div><label>Recommended package</label>
+        <select><option value="">Select…</option><option>Single sessions</option><option>12-pack</option><option>24-pack</option></select>
       </div>
     </div>
     <label>Timeframe to goal</label>
@@ -1188,30 +921,18 @@
     <label>Objection anticipated</label>
     <select>
       <option value="">None expected / Select…</option>
-      <option>Price</option>
-      <option>Time</option>
-      <option>Can do it myself</option>
-      <option>Need to think about it</option>
-      <option>Need to ask partner</option>
+      <option>Price</option><option>Time</option><option>Can do it myself</option>
+      <option>Need to think about it</option><option>Need to ask partner</option>
     </select>
     <label>Objection response notes</label>
-    <textarea placeholder="How will you handle their specific objection? Remember: ask questions, don't lecture."></textarea>
+    <textarea placeholder="How will you handle their specific objection? Ask questions, don't lecture."></textarea>
   </div>
 
   <div class="card">
     <div class="card-title">✅ Close Outcome</div>
-    <div class="checklist-item">
-      <div class="check-box" onclick="toggleCheck(this)"></div>
-      <div class="check-text">Close attempted</div>
-    </div>
-    <div class="checklist-item">
-      <div class="check-box" onclick="toggleCheck(this)"></div>
-      <div class="check-text">Package sold — loop in Caroline for subscription</div>
-    </div>
-    <div class="checklist-item">
-      <div class="check-box" onclick="toggleCheck(this)"></div>
-      <div class="check-text">Not ready to commit — pivoted to CPT / follow-up</div>
-    </div>
+    <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-text">Close attempted</div></div>
+    <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-text">Package sold — loop in Caroline for subscription</div></div>
+    <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-text">Not ready to commit — pivoted to CPT / follow-up</div></div>
     <label>Outcome notes</label>
     <textarea placeholder="What happened? What worked? What to do differently?"></textarea>
     <label>Next steps / follow-up scheduled</label>
@@ -1222,67 +943,51 @@
 </div>
 
 <script>
-  // DATE
   const d = new Date();
   document.getElementById('dateDisplay').textContent =
     d.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'});
   document.getElementById('sessionDate').value = d.toISOString().split('T')[0];
 
-  // TABS
-  function showTab(id) {
+  function showTab(id, btn) {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    event.target.classList.add('active');
+    if (btn) btn.classList.add('active');
     if (id === 'tab-summary') updateSummary();
-    window.scrollTo(0, 0);
   }
 
-  // CHECKLIST
   function toggleCheck(el) {
     el.classList.toggle('checked');
     el.textContent = el.classList.contains('checked') ? '✓' : '';
   }
 
-  // FMS SCORES
+  function toggleObs(btn) { btn.classList.toggle('flagged'); }
+
   const scores = {};
 
   function setScore(key, val, btn) {
     scores[key] = val;
-    const parent = btn.closest('.fms-test') || btn.parentElement;
-    parent.querySelectorAll('.score-btn').forEach(b => {
-      b.className = 'score-btn';
-    });
+    const container = btn.closest('.score-buttons');
+    container.querySelectorAll('.score-btn').forEach(b => b.className = 'score-btn');
     btn.classList.add('selected-' + val);
-
-    // Mark test card
     const card = btn.closest('.fms-test');
     if (card) {
       card.classList.remove('scored', 'pain');
-      if (val === 0) card.classList.add('pain');
-      else card.classList.add('scored');
+      card.classList.add(val === 0 ? 'pain' : 'scored');
     }
-
-    // Auto-calculate bilateral finals
     updateBilateralFinals();
     updateSummary();
   }
 
   function updateBilateralFinals() {
-    const pairs = [
-      {R:'fms2R', L:'fms2L', out:'fms2-final', sum:'sum-fms2'},
-      {R:'fms3R', L:'fms3L', out:'fms3-final', sum:'sum-fms3'},
-      {R:'fms4R', L:'fms4L', out:'fms4-final', sum:'sum-fms4'},
-      {R:'fms5R', L:'fms5L', out:'fms5-final', sum:'sum-fms5'},
-      {R:'fms7R', L:'fms7L', out:'fms7-final', sum:'sum-fms7'},
-    ];
-    pairs.forEach(p => {
-      const r = scores[p.R], l = scores[p.L];
-      if (r !== undefined && l !== undefined) {
-        const final = Math.min(r, l);
+    [{R:'fms2R',L:'fms2L',out:'fms2-final'},
+     {R:'fms3R',L:'fms3L',out:'fms3-final'},
+     {R:'fms4R',L:'fms4L',out:'fms4-final'},
+     {R:'fms5R',L:'fms5L',out:'fms5-final'},
+     {R:'fms7R',L:'fms7L',out:'fms7-final'}].forEach(p => {
+      if (scores[p.R] !== undefined && scores[p.L] !== undefined) {
         const el = document.getElementById(p.out);
-        if (el) el.value = final;
-        scores[p.out.replace('-final','')] = final;
+        if (el) el.value = Math.min(scores[p.R], scores[p.L]);
       }
     });
   }
@@ -1290,96 +995,54 @@
   function updateSummary() {
     const map = {
       'sum-fms1': scores['fms1'],
-      'sum-fms2': scores['fms2R'] !== undefined && scores['fms2L'] !== undefined ? Math.min(scores['fms2R'], scores['fms2L']) : undefined,
-      'sum-fms3': scores['fms3R'] !== undefined && scores['fms3L'] !== undefined ? Math.min(scores['fms3R'], scores['fms3L']) : undefined,
-      'sum-fms4': scores['fms4R'] !== undefined && scores['fms4L'] !== undefined ? Math.min(scores['fms4R'], scores['fms4L']) : undefined,
-      'sum-fms5': scores['fms5R'] !== undefined && scores['fms5L'] !== undefined ? Math.min(scores['fms5R'], scores['fms5L']) : undefined,
+      'sum-fms2': (scores['fms2R']!==undefined && scores['fms2L']!==undefined) ? Math.min(scores['fms2R'],scores['fms2L']) : undefined,
+      'sum-fms3': (scores['fms3R']!==undefined && scores['fms3L']!==undefined) ? Math.min(scores['fms3R'],scores['fms3L']) : undefined,
+      'sum-fms4': (scores['fms4R']!==undefined && scores['fms4L']!==undefined) ? Math.min(scores['fms4R'],scores['fms4L']) : undefined,
+      'sum-fms5': (scores['fms5R']!==undefined && scores['fms5L']!==undefined) ? Math.min(scores['fms5R'],scores['fms5L']) : undefined,
       'sum-fms6': scores['fms6'],
-      'sum-fms7': scores['fms7R'] !== undefined && scores['fms7L'] !== undefined ? Math.min(scores['fms7R'], scores['fms7L']) : undefined,
+      'sum-fms7': (scores['fms7R']!==undefined && scores['fms7L']!==undefined) ? Math.min(scores['fms7R'],scores['fms7L']) : undefined,
     };
-
     let total = 0, allScored = true;
     Object.entries(map).forEach(([id, val]) => {
       const el = document.getElementById(id);
       if (el) {
         if (val !== undefined) {
           el.textContent = val;
-          el.style.color = val === 3 ? '#2ecc71' : val === 2 ? '#f5a623' : val === 1 ? '#e67e22' : '#e74c3c';
+          el.style.color = val===3?'#2ecc71':val===2?'#f5a623':val===1?'#e67e22':'#e74c3c';
           total += val;
-        } else {
-          el.textContent = '—';
-          el.style.color = '#888';
-          allScored = false;
-        }
+        } else { el.textContent='—'; el.style.color='#888'; allScored=false; }
       }
     });
-
     const totalEl = document.getElementById('sum-total');
-    if (allScored) {
-      totalEl.textContent = total;
-      totalEl.style.color = total >= 14 ? 'white' : '#ffe066';
-    } else {
-      totalEl.textContent = '—';
-    }
+    if (allScored) { totalEl.textContent=total; totalEl.style.color=total>=14?'white':'#ffe066'; }
+    else { totalEl.textContent='—'; }
   }
 
-  // CLEARING / PAIN TOGGLES
-  function togglePain(btn, group) {
+  function togglePain(btn) {
     const container = btn.closest('.pain-toggle');
-    const buttons = container.querySelectorAll('.pain-btn');
-    buttons.forEach(b => {
-      b.classList.remove('selected-pos', 'selected-neg');
-    });
-    if (btn.classList.contains('pos')) btn.classList.add('selected-pos');
-    else btn.classList.add('selected-neg');
+    container.querySelectorAll('.pain-btn').forEach(b => b.classList.remove('selected-pos','selected-neg'));
+    btn.classList.add(btn.classList.contains('pos') ? 'selected-pos' : 'selected-neg');
   }
 
-  // PROGRAM LENGTH CALCULATOR
   document.addEventListener('input', function(e) {
-    if (e.target.id === 'fatTarget' || e.target.id === 'muscleTarget') {
-      const fat = parseFloat(document.getElementById('fatTarget').value) || 0;
-      const muscle = parseFloat(document.getElementById('muscleTarget').value) || 0;
-      const weeks = fat;
-      const months = muscle;
-      let result = '';
-      if (fat > 0) result += `~${weeks} weeks for fat loss`;
-      if (muscle > 0) result += (result ? ' · ' : '') + `~${months} months for muscle gain`;
-      if (!result) result = '';
-      document.getElementById('programLength').value = result;
+    if (e.target.id==='fatTarget' || e.target.id==='muscleTarget') {
+      const fat = parseFloat(document.getElementById('fatTarget').value)||0;
+      const muscle = parseFloat(document.getElementById('muscleTarget').value)||0;
+      let result='';
+      if (fat>0) result+=`~${fat} weeks for fat loss`;
+      if (muscle>0) result+=(result?' · ':'')+`~${muscle} months for muscle gain`;
+      document.getElementById('programLength').value=result;
     }
   });
 
-  // CLIENT NAME IN HEADER
   function updateClientName() {
     const name = document.getElementById('clientName').value;
     document.querySelector('.header h1').textContent = name ? `⚡ ${name.split(' ')[0].toUpperCase()}` : '⚡ EQUIFIT + FMS';
   }
 
-  // RESET
   function confirmReset() {
-    if (confirm('Reset all fields for a new client? This cannot be undone.')) {
-      location.reload();
-    }
+    if (confirm('Reset all fields for a new client? This cannot be undone.')) location.reload();
   }
-
-  // Safari on iPad ignores preventScroll — so we just block Tab entirely
-  // and use Enter to advance to next field instead
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Tab') {
-      e.preventDefault();
-      return false;
-    }
-    if (e.key === 'Enter' && e.target.matches('input, select')) {
-      e.preventDefault();
-      const focusable = Array.from(document.querySelectorAll(
-        '.section.active input, .section.active textarea, .section.active select'
-      )).filter(el => !el.disabled && el.offsetParent !== null);
-      const currentIndex = focusable.indexOf(document.activeElement);
-      if (currentIndex > -1 && currentIndex < focusable.length - 1) {
-        focusable[currentIndex + 1].focus({ preventScroll: true });
-      }
-    }
-  });
 </script>
 </body>
 </html>
